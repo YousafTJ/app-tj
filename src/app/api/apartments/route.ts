@@ -16,7 +16,6 @@ export interface Apartment {
 }
 
 export interface ApartmentSearchParams {
-  zipCode: string;
   minRooms?: number;
   maxRent: number;
 }
@@ -36,6 +35,19 @@ const HEADERS = {
   "Cache-Control": "no-cache",
 };
 
+// Vestegnen municipalities + zip codes used to filter scraped results
+const VESTEGNEN_TERMS = [
+  "glostrup", "albertslund", "ishøj", "taastrup", "høje-taastrup",
+  "brøndby", "hvidovre", "rødovre", "vallensbæk", "greve",
+  "hedehusene", "brøndby strand", "avedøre",
+  "2600", "2605", "2610", "2620", "2625", "2630", "2635", "2640", "2650", "2660", "2670",
+];
+
+function isVestegnen(apt: Apartment): boolean {
+  const haystack = `${apt.title} ${apt.address}`.toLowerCase();
+  return VESTEGNEN_TERMS.some(t => haystack.includes(t));
+}
+
 function formatPrice(p: number): string {
   return new Intl.NumberFormat("da-DK", {
     style: "currency",
@@ -46,187 +58,174 @@ function formatPrice(p: number): string {
 
 // Parse Danish price strings like "5.500,-" or "6.000 kr." → number
 function parseDanishPrice(s: string): number {
-  // Remove everything except digits and dots, then remove dots (thousands separators)
   const cleaned = s.replace(/[^\d.]/g, "").replace(/\./g, "");
   const n = parseInt(cleaned, 10);
   return isNaN(n) ? 0 : n;
 }
 
 // ── LEJEBOLIG.DK ─────────────────────────────────────────────────────────────
-async function scrapeLejeBolig(params: ApartmentSearchParams): Promise<Apartment[]> {
-  try {
-    const url = new URL("https://www.lejebolig.dk/lejligheder");
-    url.searchParams.set("zipCodes", params.zipCode);
-    url.searchParams.set("maxRent", String(params.maxRent));
-    if (params.minRooms) url.searchParams.set("rooms", String(params.minRooms));
+// Correct URL pattern: /lejligheder/[city] — fetches city-specific pages
+const VESTEGNEN_CITIES = [
+  "glostrup", "albertslund", "hvidovre", "taastrup",
+  "br%C3%B8ndby", "r%C3%B8dovre", "ish%C3%B8j", "vallensb%C3%A6k", "greve",
+];
 
-    const res = await axios.get(url.toString(), { headers: HEADERS, timeout: 14000 });
-    const $ = cheerio.load(res.data);
-    const results: Apartment[] = [];
+function parseLejeBoligPage($: ReturnType<typeof cheerio.load>, city: string, params: ApartmentSearchParams): Apartment[] {
+  const results: Apartment[] = [];
 
-    $(".lease-item").each((_, el) => {
-      const titleText = $(el).find(".lease-description h2").first().text().trim();
-      // Skip dummy/locked listings (Lorem ipsum placeholders)
-      if (!titleText || titleText.toLowerCase().includes("lorem")) return;
+  $('a[href^="/lejebolig/"]').each((_, el) => {
+    const href = $(el).attr("href") || "";
+    const fullText = $(el).text().replace(/\s+/g, " ").trim();
+    if (!fullText || fullText.toLowerCase().includes("lorem")) return;
 
-      const addressText = $(el)
-        .find(".lease-sub-header div, .lease-sub-header")
-        .first()
-        .text()
-        .trim();
+    const titleText = $(el).find("h1, h2, h3, h4").first().text().trim()
+      || fullText.split(" ").slice(0, 8).join(" ");
 
-      const priceText = $(el).find(".lease-specs .rent div, .lease-specs .rent").first().text().trim();
-      const price = parseDanishPrice(priceText);
+    const cityMatch = fullText.match(/lejlighed\s+i\s+([^,\d]+?)(?:\s{2,}|\d|$)/i);
+    const addressText = cityMatch ? cityMatch[1].trim() : city;
 
-      // Size and rooms from .lease-spec spans
-      const specSpans = $(el).find(".lease-spec span");
-      let size: number | undefined;
-      let rooms: number | undefined;
+    const priceMatch = fullText.match(/(\d[\d.]{2,}),-/);
+    const price = priceMatch ? parseDanishPrice(priceMatch[1]) : 0;
 
-      specSpans.each((i, span) => {
-        const txt = $(span).text().trim();
-        const m2Match = txt.match(/(\d+)\s*m²/i);
-        const roomMatch = txt.match(/^(\d+)\s*vær/i);
-        if (m2Match) size = parseInt(m2Match[1], 10);
-        else if (roomMatch) rooms = parseInt(roomMatch[1], 10);
-        // Also try plain numbers — first is typically size (m²), second rooms
-        else if (/^\d+$/.test(txt)) {
-          const n = parseInt(txt, 10);
-          if (i === 0 && !size) size = n;
-          else if (i === 1 && !rooms) rooms = n;
-        }
+    const sizeMatch = fullText.match(/(\d+)\s*m²/i);
+    const size = sizeMatch ? parseInt(sizeMatch[1], 10) : undefined;
+
+    const roomsMatch = fullText.match(/(\d+)\s+vær(?:elser?|\.)/i);
+    const rooms = roomsMatch ? parseInt(roomsMatch[1], 10) : undefined;
+
+    const imgEl = $(el).find("img").first();
+    const rawImg = imgEl.attr("src") || imgEl.attr("data-src");
+    const imageUrl = rawImg && !rawImg.includes("bolig-locked") && rawImg.startsWith("http") ? rawImg : undefined;
+
+    if (price >= 500 && price <= params.maxRent && titleText) {
+      results.push({
+        title: titleText,
+        address: addressText,
+        price,
+        priceFormatted: formatPrice(price),
+        rooms,
+        size,
+        url: `https://www.lejebolig.dk${href}`,
+        imageUrl,
+        source: "Lejebolig.dk",
+        sourceId: "lejebolig",
       });
+    }
+  });
 
-      const linkEl = $(el).find('a[href^="/lejebolig/"]').first();
-      const href = linkEl.attr("href") || "";
-      const productUrl = href.startsWith("http") ? href : `https://www.lejebolig.dk${href}`;
+  return results;
+}
 
-      const imgEl = $(el).find("img").first();
-      const rawImg = imgEl.attr("src") || imgEl.attr("data-src");
-      // Exclude locked/placeholder images
-      const imageUrl =
-        rawImg && !rawImg.includes("bolig-locked") && rawImg.startsWith("http")
-          ? rawImg
-          : undefined;
+async function scrapeLejeBolig(params: ApartmentSearchParams): Promise<Apartment[]> {
+  const fetches = VESTEGNEN_CITIES.map(async (city) => {
+    try {
+      const url = new URL(`https://www.lejebolig.dk/lejligheder/${city}`);
+      if (params.minRooms) url.searchParams.set("rooms", String(params.minRooms));
+      const res = await axios.get(url.toString(), { headers: HEADERS, timeout: 14000 });
+      const $ = cheerio.load(res.data);
+      return parseLejeBoligPage($, decodeURIComponent(city), params);
+    } catch {
+      return [];
+    }
+  });
 
-      if (price >= 500 && price <= params.maxRent) {
-        results.push({
-          title: titleText,
-          address: addressText || `Postnr. ${params.zipCode}`,
-          price,
-          priceFormatted: formatPrice(price),
-          rooms: rooms || undefined,
-          size: size || undefined,
-          url: productUrl || url.toString(),
-          imageUrl,
-          source: "Lejebolig.dk",
-          sourceId: "lejebolig",
-        });
-      }
-    });
-
-    return results;
-  } catch {
-    return [];
-  }
+  const all = (await Promise.all(fetches)).flat();
+  const seen = new Set<string>();
+  return all.filter(apt => {
+    if (seen.has(apt.url)) return false;
+    seen.add(apt.url);
+    return true;
+  });
 }
 
 // ── BOLIGPORTAL.DK ───────────────────────────────────────────────────────────
-// Card text format: "2 værelser på 70 m²Nørrebro, Blågårds Plads6.500 kr.2 dage siden"
+// Searches each major Vestegnen city and combines results
 async function scrapeBoligPortal(params: ApartmentSearchParams): Promise<Apartment[]> {
-  try {
-    // Boligportal uses city-slug in the URL; map zipcode → city slug
-    const zipCity: Record<string, string> = {
-      "1": "københavn", "2": "københavn", "27": "brønshøj", "272": "vanløse",
-      "28": "lyngby", "29": "hellerup", "30": "helsingør", "34": "hillerød",
-      "40": "roskilde", "50": "odense", "52": "odense", "60": "kolding",
-      "64": "sønderborg", "67": "esbjerg", "70": "fredericia", "71": "vejle",
-      "74": "herning", "75": "holstebro", "80": "aarhus", "82": "aarhus",
-      "87": "horsens", "88": "viborg", "89": "randers", "90": "aalborg",
-      "92": "aalborg",
-    };
-    const prefix = params.zipCode.substring(0, 2);
-    const citySlug = zipCity[prefix] || "københavn";
+  const vestegnSlugs = ["glostrup-2600", "hvidovre-2650", "albertslund-2620", "rodovre-2610"];
 
-    const url = new URL(`https://www.boligportal.dk/lejligheder/${citySlug}/`);
-    url.searchParams.set("maxRent", String(params.maxRent));
-    if (params.minRooms) url.searchParams.set("minRooms", String(params.minRooms));
+  const fetches = vestegnSlugs.map(async (slug) => {
+    try {
+      const url = new URL(`https://www.boligportal.dk/lejeboliger/${slug}/`);
+      url.searchParams.set("maxRent", String(params.maxRent));
+      if (params.minRooms) url.searchParams.set("minRooms", String(params.minRooms));
 
-    const res = await axios.get(url.toString(), {
-      headers: { ...HEADERS, Referer: "https://www.boligportal.dk/" },
-      timeout: 14000,
-    });
-    const $ = cheerio.load(res.data);
-    const results: Apartment[] = [];
+      const res = await axios.get(url.toString(), {
+        headers: { ...HEADERS, Referer: "https://www.boligportal.dk/" },
+        timeout: 14000,
+      });
+      const $ = cheerio.load(res.data);
+      const results: Apartment[] = [];
 
-    $("a.AdCardSrp__Link").each((_, el) => {
-      const href = $(el).attr("href") || "";
-      const productUrl = href.startsWith("http") ? href : `https://www.boligportal.dk${href}`;
+      $("a.AdCardSrp__Link").each((_, el) => {
+        const href = $(el).attr("href") || "";
+        const productUrl = href.startsWith("http") ? href : `https://www.boligportal.dk${href}`;
+        const fullText = $(el).text().replace(/\s+/g, " ").trim();
 
-      const fullText = $(el).text().replace(/\s+/g, " ").trim();
+        const match = fullText.match(
+          /(\d+)\s+værelse(?:r)?\s+på\s+(\d+)\s*m²\s*(.+?)\s*(\d[\d.]+)\s*kr\./i
+        );
 
-      // Pattern: "N værelse(r) på M m²<address><price> kr."
-      const match = fullText.match(
-        /(\d+)\s+værelse(?:r)?\s+på\s+(\d+)\s*m²\s*(.+?)\s*(\d[\d.]+)\s*kr\./i
-      );
+        let rooms: number | undefined;
+        let size: number | undefined;
+        let address = "";
+        let price = 0;
 
-      let rooms: number | undefined;
-      let size: number | undefined;
-      let address = "";
-      let price = 0;
+        if (match) {
+          rooms = parseInt(match[1], 10);
+          size = parseInt(match[2], 10);
+          address = match[3].trim();
+          price = parseDanishPrice(match[4]);
+        } else {
+          const priceMatch = fullText.match(/(\d[\d.]+)\s*kr\./i);
+          if (priceMatch) price = parseDanishPrice(priceMatch[1]);
+        }
 
-      if (match) {
-        rooms = parseInt(match[1], 10);
-        size = parseInt(match[2], 10);
-        address = match[3].trim();
-        price = parseDanishPrice(match[4]);
-      } else {
-        // Fallback: try to find price anywhere in text
-        const priceMatch = fullText.match(/(\d[\d.]+)\s*kr\./i);
-        if (priceMatch) price = parseDanishPrice(priceMatch[1]);
-      }
+        const imgEl = $(el).find("img").first();
+        const imageUrl = imgEl.attr("src") || imgEl.attr("data-src");
 
-      const imgEl = $(el).find("img").first();
-      const imageUrl = imgEl.attr("src") || imgEl.attr("data-src");
+        const titleFromHref = href
+          .split("/").filter(Boolean).pop()
+          ?.replace(/-id-\d+$/, "").replace(/-/g, " ") || "Lejlighed";
 
-      // Title from address or href slug
-      const titleFromHref = href
-        .split("/")
-        .filter(Boolean)
-        .pop()
-        ?.replace(/-id-\d+$/, "")
-        .replace(/-/g, " ") || "Lejlighed";
+        const title = address
+          ? `${rooms ? rooms + "-vær. " : ""}${size ? size + " m² " : ""}— ${address}`
+          : titleFromHref;
 
-      const title = address
-        ? `${rooms ? rooms + "-vær. " : ""}${size ? size + " m² " : ""}— ${address}`
-        : titleFromHref;
+        if (price >= 1000 && price <= params.maxRent) {
+          results.push({
+            title,
+            address: address || slug,
+            price,
+            priceFormatted: formatPrice(price),
+            rooms: rooms || undefined,
+            size: size || undefined,
+            url: productUrl,
+            imageUrl,
+            source: "Boligportal.dk",
+            sourceId: "boligportal",
+          });
+        }
+      });
 
-      if (price >= 1000 && price <= params.maxRent) {
-        results.push({
-          title,
-          address: address || citySlug,
-          price,
-          priceFormatted: formatPrice(price),
-          rooms: rooms || undefined,
-          size: size || undefined,
-          url: productUrl,
-          imageUrl,
-          source: "Boligportal.dk",
-          sourceId: "boligportal",
-        });
-      }
-    });
+      return results;
+    } catch {
+      return [];
+    }
+  });
 
-    return results;
-  } catch {
-    return [];
-  }
+  const allResults = (await Promise.all(fetches)).flat();
+  // Deduplicate by URL
+  const seen = new Set<string>();
+  return allResults.filter(apt => {
+    if (seen.has(apt.url)) return false;
+    seen.add(apt.url);
+    return true;
+  });
 }
 
 export async function GET(req: NextRequest) {
   const sp = req.nextUrl.searchParams;
   const params: ApartmentSearchParams = {
-    zipCode: sp.get("zipCode") || "2200",
     minRooms: sp.get("minRooms") ? parseInt(sp.get("minRooms")!) : undefined,
     maxRent: parseInt(sp.get("maxRent") || "10000"),
   };
@@ -244,7 +243,7 @@ export async function GET(req: NextRequest) {
     r.status === "fulfilled" ? r.value : [];
 
   const lejeBoligItems = resolve(lejeBoligResult);
-  const boligPortalItems = resolve(boligPortalResult);
+  const boligPortalItems = resolve(boligPortalResult).filter(isVestegnen);
 
   const results = [...lejeBoligItems, ...boligPortalItems].sort(
     (a, b) => a.price - b.price
@@ -254,13 +253,13 @@ export async function GET(req: NextRequest) {
     {
       sourceId: "lejebolig",
       name: "Lejebolig.dk",
-      url: `https://www.lejebolig.dk/lejligheder?zipCodes=${params.zipCode}&maxRent=${params.maxRent}${params.minRooms ? `&rooms=${params.minRooms}` : ""}`,
+      url: `https://www.lejebolig.dk/lejligheder?maxRent=${params.maxRent}${params.minRooms ? `&rooms=${params.minRooms}` : ""}`,
       count: lejeBoligItems.length,
     },
     {
       sourceId: "boligportal",
       name: "Boligportal.dk",
-      url: `https://www.boligportal.dk/lejligheder/`,
+      url: `https://www.boligportal.dk/lejeboliger/glostrup-2600/`,
       count: boligPortalItems.length,
     },
   ];
