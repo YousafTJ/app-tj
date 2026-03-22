@@ -2,18 +2,16 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import PrisJagtTab from "@/components/PrisJagtTab";
 import DashboardTab from "@/components/DashboardTab";
-import BoligTab from "@/components/BoligTab";
-import BilTab from "@/components/BilTab";
 import UdgifterTab from "@/components/UdgifterTab";
-import AktieTab from "@/components/AktieTab";
 import SkatTab from "@/components/SkatTab";
-import ResearchTab from "@/components/ResearchTab";
-import { Star, Settings, LogOut } from "lucide-react";
+import TodoTab from "@/components/TodoTab";
+import FlashcardsTab from "@/components/FlashcardsTab";
+import JeopardyTab from "@/components/JeopardyTab";
+import { Star, Settings, LogOut, CheckSquare } from "lucide-react";
 import { FloatingNav, Menu, MenuItem, NavItem, DropdownLink } from "@/components/ui/navbar-menu";
 
-type TabId = "dashboard" | "prisjagt" | "bolig" | "bil" | "udgifter" | "aktier" | "skat" | "research" | "favoritter" | "trending" | "indstillinger";
+type TabId = "dashboard" | "todos" | "flashkort" | "jeopardy" | "udgifter" | "skat" | "trending" | "favoritter" | "indstillinger";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<TabId>("dashboard");
@@ -72,27 +70,24 @@ export default function Home() {
               onClick={() => goTo("dashboard")}
             />
 
-            {/* Søgning dropdown */}
+            <NavItem
+              label="To-do"
+              active={activeTab === "todos"}
+              onClick={() => goTo("todos")}
+            />
+
+            {/* Læring dropdown */}
             <MenuItem
               setActive={setActiveMenu}
               active={activeMenu}
-              item="Søgning"
+              item="Læring"
             >
               <div style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 160 }}>
-                <DropdownLink onClick={() => goTo("prisjagt")} active={activeTab === "prisjagt"}>
-                  🛒 Prisjagt
+                <DropdownLink onClick={() => goTo("flashkort")} active={activeTab === "flashkort"}>
+                  🃏 Flashkort
                 </DropdownLink>
-                <DropdownLink onClick={() => goTo("bolig")} active={activeTab === "bolig"}>
-                  🏠 Boligsøgning
-                </DropdownLink>
-                <DropdownLink onClick={() => goTo("bil")} active={activeTab === "bil"}>
-                  🚗 Bilsøgning
-                </DropdownLink>
-                <DropdownLink onClick={() => goTo("aktier")} active={activeTab === "aktier"}>
-                  📈 Aktiesøgning
-                </DropdownLink>
-                <DropdownLink onClick={() => goTo("research")} active={activeTab === "research"}>
-                  🔍 Research
+                <DropdownLink onClick={() => goTo("jeopardy")} active={activeTab === "jeopardy"}>
+                  🎯 Jeopardy
                 </DropdownLink>
               </div>
             </MenuItem>
@@ -147,17 +142,13 @@ export default function Home() {
 
       {/* Main content — padded below navbar */}
       <main style={{ maxWidth: 1200, margin: "0 auto", padding: "88px 24px 40px" }}>
-        {activeTab === "dashboard" && (
-          <DashboardTab onNavigateToPrisjagt={() => goTo("prisjagt")} />
-        )}
-        {activeTab === "prisjagt" && <PrisJagtTab />}
-        {activeTab === "bolig" && <BoligTab />}
-        {activeTab === "bil" && <BilTab />}
+        {activeTab === "dashboard" && <DashboardTab />}
+        {activeTab === "todos" && <TodoTab />}
+        {activeTab === "flashkort" && <FlashcardsTab />}
+        {activeTab === "jeopardy" && <JeopardyTab />}
         {activeTab === "udgifter" && <UdgifterTab />}
-        {activeTab === "aktier" && <AktieTab />}
         {activeTab === "skat" && <SkatTab />}
-        {activeTab === "research" && <ResearchTab />}
-        {activeTab === "trending" && <TrendingPlaceholder onSearch={() => goTo("prisjagt")} />}
+        {activeTab === "trending" && <TrendingPlaceholder />}
         {activeTab === "favoritter" && <FavoritterPlaceholder />}
         {activeTab === "indstillinger" && <IndstillingerPlaceholder />}
       </main>
@@ -165,7 +156,7 @@ export default function Home() {
   );
 }
 
-function TrendingPlaceholder({ onSearch }: { onSearch: () => void }) {
+function TrendingPlaceholder() {
   const trending = [
     "iPhone 16 Pro", "Samsung Galaxy S25", "PlayStation 5",
     "NVIDIA RTX 5080", "MacBook Pro M4", "AirPods Pro 2",
@@ -177,11 +168,10 @@ function TrendingPlaceholder({ onSearch }: { onSearch: () => void }) {
       <p style={{ color: "var(--text-2)", marginBottom: 24 }}>Populære produkter lige nu</p>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 12 }}>
         {trending.map((item, i) => (
-          <div key={item} className="uv-card-1" style={{ cursor: "pointer" }} onClick={onSearch}>
+          <div key={item} className="uv-card-1">
             <div className="uv-card-1-inner" style={{ padding: 20 }}>
               <div style={{ fontSize: 22, fontWeight: 800, color: "#5B42F3", marginBottom: 8 }}>#{i + 1}</div>
               <p style={{ fontSize: 14, fontWeight: 500, color: "#f4f1ee" }}>{item}</p>
-              <p style={{ fontSize: 12, color: "#57534e", marginTop: 4 }}>Klik for at søge</p>
             </div>
           </div>
         ))}
@@ -205,13 +195,6 @@ function FavoritterPlaceholder() {
 }
 
 function IndstillingerPlaceholder() {
-  const settings = [
-    { label: "Google Shopping (SerpAPI)", desc: "Aktiveret — 100 søgninger/måned gratis", on: true },
-    { label: "Proshop.dk scraper", desc: "Aktiveret", on: true },
-    { label: "Komplett.dk scraper", desc: "Aktiveret", on: true },
-    { label: "Power.dk scraper", desc: "Delvist aktiveret — kan blokere", on: true },
-    { label: "DBA.dk scraper", desc: "Aktiveret — brugte varer inkluderet", on: true },
-  ];
   return (
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
@@ -220,37 +203,27 @@ function IndstillingerPlaceholder() {
       </div>
       <p style={{ color: "var(--text-2)", marginBottom: 24 }}>Tilpas din oplevelse</p>
       <div className="uv-card-1">
-        <div className="uv-card-1-inner">
-          {settings.map((s, i) => (
-            <div
-              key={s.label}
-              style={{
-                display: "flex", alignItems: "center", justifyContent: "space-between",
-                padding: "16px 20px",
-                borderTop: i > 0 ? "1px solid rgba(255,255,255,0.06)" : "none",
-              }}
-            >
-              <div>
-                <p style={{ fontSize: 14, fontWeight: 500, color: "#f4f1ee" }}>{s.label}</p>
-                <p style={{ fontSize: 13, color: "#57534e" }}>{s.desc}</p>
-              </div>
-              <div style={{
-                width: 44, height: 24, borderRadius: 12,
-                background: s.on ? "linear-gradient(144deg, #AF40FF, #5B42F3)" : "var(--border)",
-                position: "relative", cursor: "pointer", flexShrink: 0,
-              }}>
-                <div style={{
-                  position: "absolute", top: 3, left: s.on ? 23 : 3,
-                  width: 18, height: 18, backgroundColor: "white",
-                  borderRadius: "50%", transition: "left 0.2s ease",
-                  boxShadow: "0 1px 3px rgb(0 0 0 / 0.3)",
-                }} />
-              </div>
+        <div className="uv-card-1-inner" style={{ padding: "24px 20px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 16, padding: "8px 0" }}>
+            <CheckSquare style={{ width: 18, height: 18, color: "#5B42F3" }} />
+            <div>
+              <p style={{ fontSize: 14, fontWeight: 500, color: "#f4f1ee", margin: 0 }}>CosmosDB forbindelse</p>
+              <p style={{ fontSize: 13, color: "#57534e", margin: "2px 0 0" }}>Aktiveret — localhost:8081 (emulator)</p>
             </div>
-          ))}
+            <div style={{
+              marginLeft: "auto", width: 44, height: 24, borderRadius: 12,
+              background: "linear-gradient(144deg, #AF40FF, #5B42F3)",
+              position: "relative",
+            }}>
+              <div style={{
+                position: "absolute", top: 3, left: 23,
+                width: 18, height: 18, backgroundColor: "white",
+                borderRadius: "50%", boxShadow: "0 1px 3px rgb(0 0 0 / 0.3)",
+              }} />
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 }
-

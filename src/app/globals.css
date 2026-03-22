@@ -291,6 +291,36 @@
   100% { background-position: 0% 0%, 0 0; }
 }
 
+/* Flashcard 3D flip */
+.fc-scene { perspective: 1000px; cursor: pointer; }
+.fc-card {
+  position: relative;
+  width: 100%; height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.fc-card.flipped { transform: rotateY(180deg); }
+.fc-face {
+  position: absolute; inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 14px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 24px;
+  text-align: center;
+}
+.fc-face-back { transform: rotateY(180deg); }
+
+/* Jeopardy */
+.jp-cell {
+  display: flex; align-items: center; justify-content: center;
+  text-align: center; cursor: pointer; border-radius: 10px;
+  transition: transform 0.15s, box-shadow 0.15s;
+  user-select: none;
+}
+.jp-cell:hover:not(.jp-used) { transform: scale(1.03); }
+
 /* Animations */
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }

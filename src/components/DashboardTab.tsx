@@ -8,8 +8,6 @@ import {
   RefreshCw,
   Clock,
   AlertTriangle,
-  ChevronRight,
-  Search,
   Radio,
   TrendingUp,
   TrendingDown,
@@ -310,11 +308,7 @@ function MarketMoversPanel({ movers, loading }: { movers: MarketMoversResponse |
   );
 }
 
-interface DashboardTabProps {
-  onNavigateToPrisjagt: () => void;
-}
-
-export default function DashboardTab({ onNavigateToPrisjagt }: DashboardTabProps) {
+export default function DashboardTab() {
   const [data, setData] = useState<NewsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [lastFetched, setLastFetched] = useState<Date | null>(null);
@@ -482,56 +476,6 @@ export default function DashboardTab({ onNavigateToPrisjagt }: DashboardTabProps
         />
       </div>
 
-      {/* CTA — Prisjagt */}
-      <div className="uv-card-1">
-        <div className="uv-card-1-inner" style={{ padding: "24px 28px" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-              <div style={{
-                width: 44, height: 44, borderRadius: 10,
-                backgroundColor: "rgba(255,255,255,0.1)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                flexShrink: 0,
-              }}>
-                <Search style={{ width: 20, height: 20, color: "var(--text)" }} />
-              </div>
-              <div>
-                <h3 style={{ fontSize: 16, fontWeight: 700, color: "var(--text)", margin: 0 }}>
-                  Find de billigste priser
-                </h3>
-                <p style={{ fontSize: 13, color: "var(--text-2)", margin: "2px 0 0" }}>
-                  Proshop, Komplett, Power, DBA og Google Shopping på én gang
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={onNavigateToPrisjagt}
-              className="uv-btn"
-            >
-              <span className="uv-btn-text"><span>Gå til Prisjagt</span></span>
-              <ChevronRight style={{ width: 16, height: 16 }} />
-            </button>
-          </div>
-
-          <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid var(--border)", display: "flex", flexWrap: "wrap", gap: 8 }}>
-            {[
-              { name: "Google Shopping", icon: "🛒" },
-              { name: "Proshop.dk", icon: "⚡" },
-              { name: "Komplett.dk", icon: "💚" },
-              { name: "Power.dk", icon: "🔋" },
-              { name: "DBA.dk", icon: "🏷️" },
-            ].map(s => (
-              <span key={s.name} style={{
-                fontSize: 12, color: "var(--text-2)",
-                backgroundColor: "rgba(255,255,255,0.06)",
-                padding: "4px 10px", borderRadius: 20,
-              }}>
-                {s.icon} {s.name}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

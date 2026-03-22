@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@azure/cosmos": "^4.9.2",
     "@sparticuz/chromium": "^143.0.4",
     "@tailwindcss/postcss": "^4.2.1",
     "axios": "^1.13.6",
