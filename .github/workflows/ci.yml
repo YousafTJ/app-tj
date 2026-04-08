@@ -1,0 +1,34 @@
+name: Next.js CI/CD
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+jobs:
+    byg-og-test:
+        runs-on: ubuntu-latest
+
+        steps:
+        - name: Hent koden
+          uses: actions/checkout@v4
+
+        - name: Installer Node
+          uses: actions/setup-node@v4
+          with:
+            node-version: '20'
+            cache: npm
+
+        - name: Installer pakker
+          run: npm ci
+
+        - name: Byg Next.js app
+          run: npm run build
+
+        - name: Deploy til Vercel
+          uses: amondnet/vercel-action@v25
+          with:
+            vercel-token: ${{ secrets.VERCEL_TOKEN_APP }}
+            vercel-org-id: ${{ secrets.VERCEL_ORG_ID_APP }}
+            vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_APP }}
+            vercel-args: '--prod'
