@@ -571,7 +571,7 @@ function HigherOrLower() {
           background: "rgba(255,255,255,0.04)", border: "1.5px solid rgba(255,255,255,0.08)",
         }}>
           <img src={left!.flags.png} alt="" style={{ width: 80, borderRadius: 6, marginBottom: 12, boxShadow: "0 2px 12px rgba(0,0,0,0.4)" }} />
-          <p style={{ fontSize: 16, fontWeight: 700, color: "#1c1917", margin: "0 0 8px" }}>{left!.name.common}</p>
+          <p style={{ fontSize: 16, fontWeight: 700, color: "#e7e5e4", margin: "0 0 8px" }}>{left!.name.common}</p>
           <p style={{ fontSize: 28, fontWeight: 900, color: "#AF40FF", margin: 0 }}>{meta.format(leftVal)}</p>
           <p style={{ fontSize: 12, color: "#57534e", margin: "4px 0 0" }}>{meta.label}</p>
         </div>
@@ -589,7 +589,7 @@ function HigherOrLower() {
           transition: "all 0.3s",
         }}>
           <img src={right!.flags.png} alt="" style={{ width: 80, borderRadius: 6, marginBottom: 12, boxShadow: "0 2px 12px rgba(0,0,0,0.4)" }} />
-          <p style={{ fontSize: 16, fontWeight: 700, color: "#1c1917", margin: "0 0 8px" }}>{right!.name.common}</p>
+          <p style={{ fontSize: 16, fontWeight: 700, color: "#e7e5e4", margin: "0 0 8px" }}>{right!.name.common}</p>
           {result ? (
             <>
               <p style={{ fontSize: 28, fontWeight: 900, color: result === "correct" ? "#a3e635" : "#f87171", margin: 0 }}>
@@ -609,7 +609,7 @@ function HigherOrLower() {
           <button onClick={() => guess(true)} style={{ ...gradBtn, fontSize: 18, padding: "14px 40px" }}>
             ↑ Højere
           </button>
-          <button onClick={() => guess(false)} style={{ ...gradBtn, fontSize: 18, padding: "14px 40px", background: "rgba(255,255,255,0.08)", border: "1.5px solid rgba(255,255,255,0.15)" }}>
+          <button onClick={() => guess(false)} style={{ ...gradBtn, fontSize: 18, padding: "14px 40px", background: "#374151", border: "1.5px solid #6b7280", color: "#f9fafb" }}>
             ↓ Lavere
           </button>
         </div>

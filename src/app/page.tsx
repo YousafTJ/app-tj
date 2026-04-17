@@ -51,11 +51,10 @@ const MOBILE_SECTIONS = [
     ],
   },
   {
-    label: "Læring",
+    label: "Datamatiker",
     items: [
       { id: "flashkort" as TabId, label: "🃏 Flashkort" },
       { id: "jeopardy"  as TabId, label: "🎯 Jeopardy" },
-      { id: "spil"      as TabId, label: "🎮 Spil" },
     ],
   },
   {
@@ -128,23 +127,18 @@ export default function Home() {
             <NavItem label="Dashboard" active={activeTab === "dashboard"} onClick={() => goTo("dashboard")} />
             <NavItem label="To-do"     active={activeTab === "todos"}     onClick={() => goTo("todos")} />
 
-            <MenuItem setActive={setActiveMenu} active={activeMenu} item="Læring">
+            <MenuItem setActive={setActiveMenu} active={activeMenu} item="Datamatiker">
               <div style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 160 }}>
                 <DropdownLink onClick={() => goTo("flashkort")} active={activeTab === "flashkort"}>🃏 Flashkort</DropdownLink>
                 <DropdownLink onClick={() => goTo("jeopardy")}  active={activeTab === "jeopardy"}>🎯 Jeopardy</DropdownLink>
-                <DropdownLink onClick={() => goTo("spil")}      active={activeTab === "spil"}>🎮 Spil</DropdownLink>
               </div>
             </MenuItem>
 
-            <MenuItem setActive={setActiveMenu} active={activeMenu} item="Mere">
-              <div style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 160 }}>
-                <DropdownLink onClick={() => goTo("indkob")}        active={activeTab === "indkob"}>🛒 Indkøbsliste</DropdownLink>
-                <DropdownLink onClick={() => goTo("udgifter")}      active={activeTab === "udgifter"}>💸 Udgifter</DropdownLink>
-                <DropdownLink onClick={() => goTo("skat")}          active={activeTab === "skat"}>🧾 Skatteberegner</DropdownLink>
-                <DropdownLink onClick={() => goTo("domæne")}        active={activeTab === "domæne"}>🔍 Domæne-tjek</DropdownLink>
-                <DropdownLink onClick={() => goTo("indstillinger")} active={activeTab === "indstillinger"}>⚙️ Indstillinger</DropdownLink>
-              </div>
-            </MenuItem>
+            <NavItem label="🎮 Spil" active={activeTab === "spil"} onClick={() => goTo("spil")} />
+
+            <NavItem label="🛒 Indkøbsliste" active={activeTab === "indkob"}   onClick={() => goTo("indkob")} />
+            <NavItem label="💸 Udgifter"     active={activeTab === "udgifter"} onClick={() => goTo("udgifter")} />
+            <NavItem label="🔍 Domæne-tjek"  active={activeTab === "domæne"}   onClick={() => goTo("domæne")} />
 
             <NavItem label="📈 Aktier"    active={activeTab === "aktier"}    onClick={() => goTo("aktier")} />
             <NavItem label="⌨️ Genveje"  active={activeTab === "genveje"}   onClick={() => goTo("genveje")} />
