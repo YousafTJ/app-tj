@@ -250,6 +250,15 @@ const TOPICS: Topic[] = [
         ],
       },
       {
+        emoji: "⏸️",
+        heading: "\"Udover pris — hvad er vigtigt for dig?\"",
+        body: "Når kunden nævner pris, stil ét spørgsmål og vent. 3 sekunders pause efter 'må jeg lige spørge' — og derefter: 'udover pris selvfølgelig, hvad er vigtigt for dig?' Det flytter samtalen væk fra pris og tilbage til behov og værdier. Kunden begynder nu at sælge sig selv på det der faktisk betyder noget for dem.",
+        examples: [
+          "Kunden: \"Det er lidt dyrt.\" Du: \"Må jeg lige spørge...\" [3 sekunders pause] \"...udover pris selvfølgelig — hvad er vigtigt for dig?\" → Kunden fortæller om kvalitet, garanti, support eller noget andet der betyder noget for dem. Nu handler samtalen ikke om pris.",
+          "Pausen er ikke ubehagelig — den er magtfuld. Den viser ro, selvtillid og at du tager dem seriøst. Kunden udfylder stilheden med det der egentlig betyder noget for dem.",
+        ],
+      },
+      {
         emoji: "🔄",
         heading: "Fra pris til resultat — flyt kundens fokus",
         body: "Kunder der tænker prisbaseret ('hvad koster det?') handler ikke. Kunder der tænker resultatorienteret ('hvad får jeg ud af det?') handler. Dit job er at flytte dem fra den ene til den anden tankegang gennem spørgsmål og god indvendingshåndtering.",
@@ -274,6 +283,7 @@ const TOPICS: Topic[] = [
         type: "For høj pris",
         emoji: "💸",
         scripts: [
+          "Må jeg lige spørge... [3 sekunders pause] ...udover pris selvfølgelig — hvad er vigtigt for dig?",
           "Det forstår jeg godt. Og det er en lidt tungere investering i dag — men hvad tror du egentlig ville være konsekvensen ved at gå med det billigere valg? Hvad tror du du ville misse ud på?",
           "Ja, det er lidt dyrere i dag. Men grunden til at det er dyrere er [list de særlige fordele for kunden]. Så du kan sagtens gå med det andet valg, det er dit kald i sidste ende. Men de her ekstra fordele vi gennemgik — er det noget som vil betyde noget for dig? [Ja] — Er det så ikke noget som vil være værd at give lidt ekstra for?",
           "Det er korrekt. Men du sagde at dette er et køb som skal dække dig i 5 år — vil det være fair at sige at det er et langtidskøb? [Ja] — Okay fedt. Så det at du giver lidt ekstra i dag, på længere sigt vil du få mere ud af din [fx computer]. Om 1-2 år ville du takke dig selv for det. Siden det er et langtidskøb — synes du det er bedre at tænke kortsigtet eller langsigtet? [Langsigtet] — Okay, så på længere sigt: hvilken løsning ville gavne dig mest?",
@@ -594,6 +604,92 @@ const TOPICS: Topic[] = [
       { q: "Hvilke udfordringer har du haft — og hvad føler du kunne forbedre sig?", note: "Forbedringer/Udfordringer — nu åbner de op om problemerne med egne ord." },
       { q: "Hvis du skulle gå med en anden udbyder end dem du har i dag — hvad skulle den udbyder have for at det er interessant for dig?", note: "Alternativ — de maler selv den ideelle løsning for dig. Det er præcis hvad du sælger dem." },
       { q: "Har jeg forstået det korrekt, at det primære problem er [X] og at det koster jer [Y]?", note: "Opsummering — viser du lyttede, positionerer dig som ekspert og giver kunden mulighed for at bekræfte." },
+    ],
+  },
+  {
+    id: "bala",
+    emoji: "🔁",
+    title: "BALA-modellen",
+    tagline: "Behov → Accept → Løsning → Accept — den komplette salgssamtale i fire trin",
+    color: "#10b981",
+    quote: "\"Den der opsummerer rigtigt, ejer samtalen.\"",
+    desc: "BALA er en struktureret samtalemetode der sikrer at du aldrig hopper til løsningen før kunden er klar. De fire trin — Behov, Accept, Løsning, Accept — skaber en naturlig samtale der ikke føles som et salg, men som en beslutning kunden selv tog.",
+    principles: [
+      {
+        emoji: "🔍",
+        heading: "B — Behov: forstå hvad de ønsker, frygter og vægter",
+        body: "Brug åbne HV-spørgsmål (hvad, hvem, hvor, hvornår, hvorfor) til at danne et komplet billede af kunden: hvad ønsker de at opnå, hvad vil de undgå, hvad vægter de højt, og hvad har de i dag kontra hvad de drømmer om. Jo bredere og dybere du graver her, desto stærkere bliver resten af samtalen.",
+        examples: [
+          "\"Hvad er det vigtigst for dig at en ny løsning giver dig — hvad skal den gøre for dig?\" → Hvad de ønsker.",
+          "\"Hvad har du oplevet ikke fungerer godt nok i dag?\" → Hvad de vil undgå.",
+          "\"Hvis du skulle prioritere — hvad er mest afgørende for dig: pris, kvalitet, eller at det er nemt at bruge?\" → Hvad de vægter.",
+          "\"Hvad har du i dag, og hvad ville det ideelle se ud som for dig?\" → Nu og fremtid — gabet der sælger løsningen.",
+        ],
+      },
+      {
+        emoji: "✅",
+        heading: "A — Accept: opsummér og bekræft din forståelse",
+        body: "Når du har afdækket behovet, opsummerer du hvad du hørte — præcist og i kundens eget sprog. Stil det som et spørgsmål der inviterer til bekræftelse. Det viser at du lyttede, skaber alignment, og får kunden til at sige 'ja' første gang — det første lille ja der baner vejen for det store.",
+        examples: [
+          "\"Så det jeg forstår er at du gerne vil have [X], at [Y] er vigtigt for dig, og at du vil undgå [Z] — er det korrekt forstået?\"",
+          "\"Lad mig opsummere hvad du har fortalt mig: du har [situationen i dag], du ønsker [den fremtidige tilstand], og det der er allervigtigst for dig er [topprioritet]. Har jeg fat i det?\"",
+        ],
+      },
+      {
+        emoji: "💡",
+        heading: "L — Løsning: præsentér en løsning der svarer på deres egne ord",
+        body: "Nu præsenterer du en løsning — men ikke din standard-pitch. Du kobler løsningen direkte til de behov kunden selv formulerede i B og bekræftede i A. Brug kundens egne ord og prioriteter til at forklare hvorfor din løsning er det rigtige match. Det føles som om løsningen er skræddersyet — fordi den er.",
+        examples: [
+          "\"Du fortalte mig at [X] er vigtigst for dig og at du vil undgå [Z]. Den løsning jeg vil anbefale er [løsning] — fordi den giver dig præcis [X] og sikrer at [Z] ikke sker.\"",
+          "\"Baseret på hvad du har fortalt mig — at du vægter [prioritet] højest — ville jeg foreslå [løsning]. Det giver dig [fordel 1], [fordel 2] og [fordel 3]. Det passer præcis til det du beskrev.\"",
+        ],
+      },
+      {
+        emoji: "🤝",
+        heading: "A — Accept: gennemgå løsningen og hent det andet ja",
+        body: "Afslut med at gennemgå løsningen konkret og spørge ind til kundens reaktion. Det er ikke closing-pres — det er en naturlig invitation til at kunden selv vurderer om det giver mening. Du henter det andet ja, der bekræfter at kunden er klar til at gå videre.",
+        examples: [
+          "\"Nu vil jeg gerne gennemgå løsningen med dig — du får [element 1] som vil give dig [fordel 1], du får [element 2] som løser [problem], og du får [element 3] som du sagde var vigtigt. Hvad tænker du om den løsning?\"",
+          "\"Så lad mig sammenfatte hvad du får: [punkt 1], [punkt 2] og [punkt 3]. Det svarer præcis til det du beskrev i starten. Synes du det giver mening for dig?\"",
+        ],
+      },
+      {
+        emoji: "🌀",
+        heading: "BALA er en cirkulær samtale — ikke et script",
+        body: "BALA er ikke et fast script der køres fra start til slut. Det er en struktur du vender tilbage til. Hvis kunden rejser en ny bekymring under L, går du kortvarigt tilbage til B og spørger ind — og kører A og L igen. Det vigtige er at hvert skridt er gennemført, inden du går videre.",
+        examples: [
+          "Kunden reagerer på løsningen med en ny bekymring? Gå kortvarigt tilbage: \"Det er interessant — hvad er det præcist der bekymrer dig ved det?\" (B) → opsummér (A) → juster løsningen (L) → hent nyt accept (A).",
+          "Brug BALA til at strukturere hele samtalen — men lad det lyde naturligt. Kunden må aldrig opleve at du følger en model. De skal opleve at du lytter og hjælper.",
+        ],
+      },
+      {
+        emoji: "🎯",
+        heading: "B-fasen: spørg til hvad de IKKE vil — det er ofte vigtigere",
+        body: "Mange sælgere fokuserer på hvad kunden vil have. De bedste finder ud af hvad kunden vil undgå — frygt, dårlige erfaringer, risici. Det er ofte det der reelt driver beslutningen. Spørg direkte: hvad er det vigtigste for dig at undgå?",
+        examples: [
+          "\"Hvad har du prøvet hidtil der ikke virkede — hvad vil du absolut undgå denne gang?\" → Kunden afslører sin egentlige frygt. Nu kan du adressere den direkte i løsningen.",
+          "\"Hvad ville en dårlig beslutning se ud som for dig her?\" → Et kraftfuldt spørgsmål der afslører det kunden i virkeligheden er bange for.",
+        ],
+      },
+      {
+        emoji: "📋",
+        heading: "A-fasen: brug kundens egne ord — ikke dine",
+        body: "Når du opsummerer i A, brug præcis de ord kunden brugte — ikke din omformulering. Kunder reagerer stærkere på egne ord fordi de genkender dem som sande. Det er spejling i opsummeringsform.",
+        examples: [
+          "Kunden siger: \"Jeg vil gerne have noget der er nemt at bruge uden at jeg skal bruge dage på at lære det.\" Du i A: \"Så det vigtigste for dig er at det er nemt at bruge uden oplæring der tager lang tid — er det rigtigt forstået?\" → Kunden hører sine egne ord og bekræfter.",
+          "Undgå at parafrasere for meget. \"Du vil gerne have en brugervenlig løsning\" er svagere end \"du vil gerne have noget nemt at bruge uden at bruge dage på det\" — brug kundens formulering.",
+        ],
+      },
+    ],
+    model: { name: "BALA-modellen", items: ["B — Behov: kortlæg hvad de ønsker, hvad de vil undgå, hvad de vægter og gabet mellem nu og drøm", "A — Accept: 'Så du gerne vil have X, Y og Z — er det korrekt forstået?'", "L — Løsning: præsentér en løsning koblet direkte til de behov de selv formulerede", "A — Accept: 'Lad mig gennemgå løsningen med dig — du får X og det giver dig Y. Hvad tænker du om den løsning?'"] },
+    exampleQuestions: [
+      { q: "Hvad er det vigtigst for dig at en ny løsning giver dig?", note: "B — ønsker: hvad de vil opnå. Åbent HV-spørgsmål." },
+      { q: "Hvad har du oplevet ikke fungerer godt nok i dag?", note: "B — undgå: hvad de frygter eller har dårlige erfaringer med." },
+      { q: "Hvad ville en dårlig beslutning se ud som for dig her?", note: "B — undgå (avanceret): afslører den egentlige frygt bag beslutningen." },
+      { q: "Hvis du skulle prioritere — hvad er mest afgørende: pris, kvalitet eller brugervenlighed?", note: "B — vægter: finder deres topprioritet som du kobler løsningen til." },
+      { q: "Hvad har du i dag, og hvad ville det ideelle se ud som for dig?", note: "B — nu vs. drøm: kortlægger gabet der sælger løsningen." },
+      { q: "Så det jeg forstår er at du gerne vil have X, at Y er vigtigt for dig og at du vil undgå Z — er det korrekt forstået?", note: "A (1. accept): opsummering i kundens egne ord der inviterer det første bekræftende ja." },
+      { q: "Nu vil jeg gennemgå løsningen med dig — du får X som giver dig Y, og Z som løser det du nævnte. Hvad tænker du om den løsning?", note: "A (2. accept): løsningsgennemgang der inviterer til kundens reaktion frem for at presse på lukning." },
     ],
   },
   {
