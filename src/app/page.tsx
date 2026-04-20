@@ -18,6 +18,7 @@ import KeyboardTab from "@/components/KeyboardTab";
 import SalgTab from "@/components/SalgTab";
 import DetPerfekteSalgTab from "@/components/DetPerfekteSalgTab";
 import KundeforståelseTab from "@/components/KundeforståelseTab";
+import SalgsSpilTab from "@/components/SalgsSpilTab";
 import { Settings, LogOut, CheckSquare, Menu, X, ChevronRight } from "lucide-react";
 import { FloatingNav, MenuItem, NavItem, DropdownLink } from "@/components/ui/navbar-menu";
 
@@ -25,7 +26,7 @@ type TabId =
   | "dashboard" | "todos" | "flashkort" | "jeopardy"
   | "udgifter" | "skat" | "indstillinger" | "spil"
   | "indkob" | "domæne" | "værktøjer"
-  | "aktier" | "genveje" | "fitness" | "salg" | "perfekt-salg" | "kundeforståelse";
+  | "aktier" | "genveje" | "fitness" | "salg" | "perfekt-salg" | "kundeforståelse" | "salgs-spil";
 
 const TAB_LABELS: Record<TabId, string> = {
   dashboard: "🏠 Dashboard", todos: "✅ To-do", flashkort: "🃏 Flashkort",
@@ -33,7 +34,7 @@ const TAB_LABELS: Record<TabId, string> = {
   indstillinger: "⚙️ Indstillinger", spil: "🎮 Spil", indkob: "🛒 Indkøbsliste",
   domæne: "🔍 Domæne-tjek", værktøjer: "🔧 Værktøjer", aktier: "📈 Aktier",
   genveje: "⌨️ Genveje", fitness: "💪 Fitness", salg: "💼 Salg",
-  "perfekt-salg": "🏆 Perfekt Salg", "kundeforståelse": "🧠 Forstå Kunden",
+  "perfekt-salg": "🏆 Perfekt Salg", "kundeforståelse": "🧠 Forstå Kunden", "salgs-spil": "🎮 Salgs-spillet",
 };
 
 const MOBILE_SECTIONS = [
@@ -45,6 +46,7 @@ const MOBILE_SECTIONS = [
       { id: "salg"            as TabId, label: "💼 Salg" },
       { id: "perfekt-salg"   as TabId, label: "🏆 Perfekt Salg" },
       { id: "kundeforståelse" as TabId, label: "🧠 Forstå Kunden" },
+      { id: "salgs-spil"     as TabId, label: "🎮 Salgs-spillet" },
       { id: "fitness"   as TabId, label: "💪 Fitness" },
       { id: "aktier"    as TabId, label: "📈 Aktier" },
       { id: "indkob"    as TabId, label: "🛒 Indkøb" },
@@ -149,6 +151,7 @@ export default function Home() {
                 <DropdownLink onClick={() => goTo("salg")}            active={activeTab === "salg"}>💼 Salg</DropdownLink>
                 <DropdownLink onClick={() => goTo("perfekt-salg")}   active={activeTab === "perfekt-salg"}>🏆 Perfekt Salg</DropdownLink>
                 <DropdownLink onClick={() => goTo("kundeforståelse")} active={activeTab === "kundeforståelse"}>🧠 Forstå Kunden</DropdownLink>
+                <DropdownLink onClick={() => goTo("salgs-spil")}     active={activeTab === "salgs-spil"}>🎮 Salgs-spillet</DropdownLink>
               </div>
             </MenuItem>
 
@@ -338,6 +341,7 @@ export default function Home() {
         {activeTab === "salg"            && <SalgTab />}
         {activeTab === "perfekt-salg"   && <DetPerfekteSalgTab />}
         {activeTab === "kundeforståelse" && <KundeforståelseTab />}
+        {activeTab === "salgs-spil"      && <SalgsSpilTab />}
       </main>
     </div>
   );

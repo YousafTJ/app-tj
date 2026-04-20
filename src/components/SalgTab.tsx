@@ -166,24 +166,30 @@ const TOPICS: Topic[] = [
       },
       {
         emoji: "✋",
-        heading: "A — Anerkend (LAER-modellen)",
-        body: "Gentag det du hørte i komprimeret form. Vis at du forstod uden at argumentere imod. Anerkendelse sænker temperaturen og viser kunden at de er hørt — det er fundamentet for al videre håndtering.",
-        example: "\"Jeg forstår at du synes vores løsning er dyr.\" — Ikke mere. Ingen forsvar, ingen forklaring. Bare anerkendelse.",
+        heading: "A — Anerkend + vis empati (LAER-modellen)",
+        body: "Gentag det du hørte og vis at du forstår følelsen bag. Anerkendelse + empati i én bevægelse sænker temperaturen og viser kunden at de er både hørt og forstået. Ingen forsvar, ingen forklaring — bare anerkendelse af både ord og følelse.",
+        examples: [
+          "\"Jeg forstår at du synes det er en lidt større investering end du havde regnet med — og det er en helt naturlig reaktion.\" → Ord anerkendt, følelse anerkendt. Kunden falder ned.",
+          "\"Det forstår jeg godt — og det er faktisk en ret normal bekymring at have på det her tidspunkt.\" → Du validerer uden at gå i forsvar. Kunden føler sig set.",
+        ],
       },
       {
         emoji: "🔎",
-        heading: "E — Empati & Udforsk (LAER-modellen)",
-        body: "Vis kunden at du forstår hvorfor de føler som de gør — og grav dybere med diagnosticerende spørgsmål. Det kunden siger og det de mener er ofte to forskellige ting. Brug 5-Hvorfor-teknikken til at nå roden.",
+        heading: "E — Efterforsk (LAER-modellen)",
+        body: "Henvis tilbage til noget kunden selv fortalte dig var vigtigt. Du graver ikke efter ny information — du spejler det de allerede sagde, og kobler det til situationen nu. Det viser du lyttede, og det bygger bro til R.",
         examples: [
-          "\"Det forstår jeg godt — der er rigtig meget information og det er nyt for dig. Det er helt naturligt at være usikker.\" → Empati åbner kunden.",
-          "Brug '5 Hvorfor': Kunden siger 'det er for dyrt' → Hvorfor? 'Vi har stramt budget' → Hvorfor? 'Vi brugte meget på X' → Nu ved du den reelle årsag.",
+          "\"Du fortalte mig også at kvaliteten af TV-billedet var særligt vigtig for dig — at det ligesom skulle give hele familien en rigtig biografoplevelse hjemme. Det var vigtigt for dig, ik?\" → Kunden siger ja — og nu er du klar til R.",
+          "\"Du nævnte tidligere at det her med [X] var noget af det vigtigste for dig i den her beslutning, ik?\" → En bekræftelse fra dem er alt hvad du har brug for.",
         ],
       },
       {
         emoji: "💬",
         heading: "R — Reager (LAER-modellen)",
-        body: "Først nu — efter du har lyttet, anerkendt og udforsket — giver du et skræddersyet svar baseret på hvad du lærte. Dit svar kan være en holdning, et perspektiv, en løsning eller et spørgsmål.",
-        example: "\"Hvis du har haft en dårlig oplevelse, forstår jeg det godt. Men hvad synes du er vigtigst — at lade oplevelsen skræmme dig fra at træffe fornuftige beslutninger for evigt, eller at lære af den fejl og forstå hvorfor det gik galt, så du næste gang kun får gode resultater?\"",
+        body: "Kobl løsningen direkte til det kunden bekræftede i E. Brug 'derfor' som bindeleddet mellem deres behov og prisen eller beslutningen. Afslut med at vende spørgsmålet tilbage til dem — lad dem selv konkludere.",
+        examples: [
+          "\"Og derfor er det en lidt større investering — fordi du får de her ekstra fordele som du ikke har i dag. Det synes jeg selv personligt er investeringen værd. Men hvad synes du? Synes du selv at de ekstra fordele ikke er investeringen værd?\"",
+          "\"Og derfor betaler du lidt mere — fordi du præcis får det [X] du selv sagde var vigtigt. Det giver jo god mening, ik?\" → Kunden bekræfter — de har nu solgt sig selv.",
+        ],
       },
       {
         emoji: "🪞",
@@ -225,8 +231,44 @@ const TOPICS: Topic[] = [
         body: "Du møder de samme indvendinger igen og igen. Kend dem udenad og vær klar med dit svar — rolig, præcis og uden at gå i panik.",
         example: "Skriv en liste over de 5 indvendinger du møder oftest. Øv svaret til du kan det i søvne. Selvtillid i svaret signalerer ekspertise.",
       },
+      {
+        emoji: "🎪",
+        heading: "Tag et nej og gør dem nysgerrige",
+        body: "Når kunden siger nej, er din opgave ikke at argumentere mod dem. Din opgave er at forvandle nejet til nysgerrighed. Vis dem med din viden og tryghed at der er noget de mangler at vide — og det er spændende, ikke truende. Et nej er et ubesvaret spørgsmål.",
+        examples: [
+          "\"Det forstår jeg godt — og jeg er faktisk glad for at du siger det direkte. Må jeg stille dig et enkelt spørgsmål?\" [Ja] → Nu er du tilbage i samtalen med fuld opmærksomhed.",
+          "Nej = ubesvaret spørgsmål. Find ud af hvad kunden ikke ved endnu, og sørg for at de får at vide det — ikke som pres, men som viden der ændrer billedet.",
+        ],
+      },
+      {
+        emoji: "💙",
+        heading: "Vis at du går mere op i dem end de selv gør",
+        body: "Den stærkeste position i et salg er at ville kundens resultat mere end de selv gør — og vise det. Ikke med ord, men med handlinger: sæt dig ind i deres situation, stil spørgsmål ingen andre stiller, og hav modet til at udfordre dem på deres egne vegne.",
+        examples: [
+          "\"Jeg vil ikke have at du træffer en beslutning du fortryder. Lad os gå det her igennem en gang til — for din skyld.\" Du er nu den der kæmper for dem.",
+          "Kunden nøler. Du: \"Hvad er din egentlige bekymring her? Jeg vil hellere vi taler om det nu end at du sidder og tænker på det bagefter.\" Det viser at du vil mere for dem end for salget.",
+        ],
+      },
+      {
+        emoji: "🔄",
+        heading: "Fra pris til resultat — flyt kundens fokus",
+        body: "Kunder der tænker prisbaseret ('hvad koster det?') handler ikke. Kunder der tænker resultatorienteret ('hvad får jeg ud af det?') handler. Dit job er at flytte dem fra den ene til den anden tankegang gennem spørgsmål og god indvendingshåndtering.",
+        examples: [
+          "Kunden: \"Det er dyrt.\" → Du: \"Hvad ville det betyde for dig, hvis det her problem bare var løst?\" → \"Hvad taber du per måned på at det ikke er løst?\" → Kunden sætter selv tal på gevinsten — og prisen ser pludselig anderledes ud.",
+          "Spørg: \"Hvad er vigtigt for dig — at spare penge nu, eller at få det resultat du har brug for?\" Præsentér derefter værdien i kr. og timer. Kontrasten mellem pris og resultat lukker handlen.",
+        ],
+      },
+      {
+        emoji: "🏋️",
+        heading: "Træn indvendinger aktivt med LAER-modellen",
+        body: "Skriv alle indvendinger du møder ned og lav konkrete øvelseseksempler med LAER (Lyt → Anerkend + empati → Efterforsk → Reager). Toppræsterende sælgere øver indvendingshåndtering til de kan det i søvne. Træning er ikke noget der sker én gang.",
+        examples: [
+          "Indvending: \"Det er for dyrt.\" → L: Lyt uden at afbryde → A: \"Jeg forstår godt at det føles som en større investering\" → E: \"Du fortalte mig jo også at [X] var særligt vigtigt for dig, ik?\" → R: \"Og derfor betaler du lidt mere — fordi du præcis får [X]. Hvad synes du selv?\"",
+          "Træningsøvelse: Skriv dine 5 mest hyppige indvendinger. Lav et fuldt LAER-svar til hver med E som et 'du fortalte mig også...' spørgsmål og R der vender det tilbage til kunden. Øv med en kollega ugentligt.",
+        ],
+      },
     ],
-    model: { name: "LAER-modellen (Jack Carew, 1976)", items: ["L — Lyt: giv fuld opmærksomhed, brug stilhed, afbryd ikke", "A — Anerkend: gentag hvad du hørte uden at argumentere imod", "E — Empati & Udforsk: vis forståelse, stil diagnosticerende spørgsmål", "R — Reager: giv et skræddersyet svar baseret på hvad du lærte"] },
+    model: { name: "LAER-modellen", items: ["L — Lyt: giv fuld opmærksomhed, brug stilhed, afbryd ikke", "A — Anerkend + empati: gentag det du hørte og vis forståelse for følelsen bag", "E — Efterforsk: 'du fortalte mig også at X var særligt vigtigt for dig, ik?'", "R — Reager: 'og derfor betaler du lidt mere — fordi du får de ekstra fordele du ikke har i dag. Hvad synes du?'"] },
     objections: [
       {
         type: "For høj pris",
@@ -304,6 +346,15 @@ const TOPICS: Topic[] = [
     quote: "\"Folk husker ikke hvad du sagde. De husker hvordan du fik dem til at føle sig.\"",
     desc: "En stærk relation er det fundament alt andet bygger på. Kunder der kan lide dig, lytter mere, indvender mindre og lukker nemmere. Det handler ikke om at være sælger — det handler om at være et ægte menneske der vil noget godt for dem.",
     principles: [
+      {
+        emoji: "🗣️",
+        heading: "Tal som om du har kendt dem i 10+ år",
+        body: "Gør sproget mere simpelt og bekendt. Sælgere taler professionelt og stift. Venner taler naturligt og direkte. Jo mere du lyder som én de har kendt i lang tid, desto hurtigere sænker de paraderne. Kortere sætninger, mindre jargon, mere 'dig og mig'.",
+        examples: [
+          "I stedet for: \"Vi har et produkt der potentielt kunne optimere jeres nuværende infrastruktur\" → \"Hør her — det du har nu, det kan vi gøre markant bedre. Lad mig vise dig.\"",
+          "Brug fornavn fra første sekund. Sig 'dig' i stedet for 'jer'. Sig 'vi' i stedet for 'vores virksomhed'. Sproget er bindeleddet — og simpelt sprog er stærkere.",
+        ],
+      },
       {
         emoji: "😄",
         heading: "Smil — så smiler de tilbage",
@@ -434,40 +485,48 @@ const TOPICS: Topic[] = [
     desc: "63% af tabte handler mistes allerede før behovsafdækningen — fordi sælgeren ikke kvalificerede ordentligt fra starten. Toppræsterende sælgere stiller 40% flere spørgsmål og har 76% længere discovery-samtaler end gennemsnittet. Behovsafdækning er den mest højt gearede forbedring enhver sælger kan lave.",
     principles: [
       {
-        emoji: "🔵",
-        heading: "SPIN S — Situationsspørgsmål",
-        body: "Afdæk kundens nuværende tilstand. Brug dem sparsomt — for mange signalerer manglende forberedelse. Research hvad du kan på forhånd og stil kun de situationsspørgsmål du ikke kan finde svar på andetsteds.",
+        emoji: "❓",
+        heading: "Udfordr kunden med det første spørgsmål",
+        body: "Spørg ikke bare hvad de har brug for — spørg hvorfor de overhovedet leder. Det udfordrer kunden konstruktivt og bygger tillid, fordi du viser at du tænker dybere end salgssituationen. Det første spørgsmål sætter dig som rådgiver, ikke sælger.",
         examples: [
-          "\"Hvilke værktøjer bruger I i dag til at håndtere jeres pipeline?\"",
-          "\"Hvor mange på dit team arbejder med den proces?\"",
+          "\"Kan du hjælpe mig med at forstå — hvad er årsagen til at du overhovedet er på udkig efter det her?\"",
+          "\"Hvad var det der fik dig til at tænke at det her kunne være en prioritet lige nu?\" — det er et spørgsmål ingen andre sælgere stiller.",
         ],
       },
       {
-        emoji: "🔴",
-        heading: "SPIN P — Problemspørgsmål",
-        body: "Identificér smertepunkter og udfordringer i kundens nuværende situation. Kunden er ikke altid bevidst om deres problemer — dit job er at hjælpe dem se dem tydeligt.",
+        emoji: "🙋",
+        heading: "Brug ordet 'hjælp' — det bygger alliance",
+        body: "Når du siger 'kan du hjælpe mig med at forstå', lyder du ikke som en sælger der graver information. Du lyder som én der genuint vil forstå. Det lille ord ændrer hele dynamikken og positionerer dig som én på kundens side.",
         examples: [
-          "\"Hvad er den mest tidskrævende del af den arbejdsgang?\"",
-          "\"Hvilke udfordringer oplever I med jeres nuværende løsning?\"",
+          "\"Kan du hjælpe mig med at forstå hvad årsagen er til at du stadig er med Telenor i dag? Deres priser er jo noget af det højeste i hele DK.\"",
+          "\"Kan du hjælpe mig med at forstå hvad det er der har holdt jer fra at løse det her tidligere?\"",
         ],
       },
       {
-        emoji: "🟠",
-        heading: "SPIN I — Implikationsspørgsmål (det mest kraftfulde)",
-        body: "Forstør konsekvenserne af problemet. Det er her urgency opstår naturligt — ikke fra pres, men fra kundens egen erkendelse af hvad det koster dem ikke at handle. Det er de sværeste spørgsmål at stille godt, men de mest værdifulde.",
+        emoji: "📝",
+        heading: "Opsummér — vis at du lyttede og vær eksperten",
+        body: "Opsummér hvad du hørte og bekræft med kunden. Det viser at du lyttede og forstod — og det positionerer dig automatisk som den der forstår problemet bedst. Det er et af de stærkeste ekspertsignaler der findes.",
         examples: [
-          "\"Når det forsinker levering — hvordan påvirker det jeres kundetilfredshed?\"",
-          "\"Hvad koster det jeres organisation, når den proces tager tre dage i stedet for tre timer?\"",
-          "\"Hvordan påvirker det din position over for ledelsen, når du ikke kan levere de data til tiden?\"",
+          "\"Har jeg forstået det korrekt, at det primære problem er [X], og at det koster jer [Y]?\" — Kunden bekræfter: nu er du eksperten.",
+          "\"Lad mig se om jeg har forstået det rigtigt...\" → opsummér med egne ord → \"Er det korrekt?\" → Kunden siger ja og stoler endnu mere på dig.",
         ],
       },
       {
-        emoji: "🟢",
-        heading: "SPIN N — Need-Payoff-spørgsmål",
-        body: "Hjælp kunden selv artikulere værdien af en løsning. Kunden beskriver med egne ord hvad løsningen vil betyde for dem — og det de selv siger, tror de på.",
+        emoji: "🔎",
+        heading: "Uddybende spørgsmål — grav under overfladen",
+        body: "Når kunden siger noget generelt, spørg altid ind til hvad de specifikt mener. Det er forskellen på at forstå problemet og virkelig forstå det.",
         examples: [
-          "\"Hvis I kunne automatisere det trin og spare 10 timer om ugen — hvad ville dit team fokusere på i stedet?\"",
-          "\"Hvordan ville det påvirke jeres vækstmål, hvis I kunne reducere den tid med 50%?\"",
+          "Kunden: \"Vi er egentlig tilfredse med vores nuværende leverandør.\" Du: \"Når du siger tilfreds — kan du prøve at uddybe hvad du specifikt mener? Hvad er det der har gjort at du er glad for dem?\"",
+          "Kunden: \"Det er for dyrt.\" Du: \"Kan du hjælpe mig med at forstå hvad du mener med for dyrt? I forhold til hvad?\" — De graver sig selv ned i svaret.",
+        ],
+      },
+      {
+        emoji: "🎧",
+        heading: "Stil spørgsmål du ikke kender svaret på — og lyt intensivt",
+        body: "Stil spørgsmål om ting du genuint ikke kender svaret på. Det giver dig uvurderlig information og signalerer ægte nysgerrighed. Lyt derefter med al din opmærksomhed — det du hører her er guldminen.",
+        examples: [
+          "\"Hvad har du egentlig prøvet hidtil for at løse det her?\" — Ægte nysgerrighed, ægte information.",
+          "\"Hvordan tænker du selv om det?\" — Et simpelt spørgsmål der åbner for de mest overraskende svar. Lyt uden at forberede dit næste spørgsmål.",
         ],
       },
       {
@@ -527,15 +586,14 @@ const TOPICS: Topic[] = [
       { emoji: "👥", heading: "Forstå beslutningsprocessen", body: "Den du taler med er ikke altid den der beslutter. Find ud af hvem der er — og involvér dem tidligt.", example: "\"Hvem er det typisk der tager den endelige beslutning på løsninger som den her?\"" },
       { emoji: "📣", heading: "Brug cases der matcher", body: "Social proof virker bedst når kunden kan genkende sig selv i historien.", example: "\"Vi har en kunde i samme branche — de oplevede præcis det her problem og løste det ved at...\"" },
     ],
-    model: { name: "SPIN Selling (Neil Rackham — 35.000 salgsopkald)", items: ["S — Situation: forstå nuværende kontekst (brug sparsomt)", "P — Problem: afdæk smertepunkter og udfordringer", "I — Implication: forstør konsekvenserne (mest kraftfuldt)", "N — Need-Payoff: lad kunden selv artikulere værdien"] },
+    model: { name: "Tristan Tate — 5 Behovsspørgsmål (Årsag → Status → Effekt → Forbedringer → Alternativ)", items: ["Årsag — \"Kan du hjælpe mig med at forstå hvad årsagen er til det her problem?\"", "Status — \"Hvad gør du/I lige nu for at løse eller håndtere det?\"", "Effekt — \"Hvad føler du går godt med det du gør i dag?\"", "Forbedringer/Udfordringer — \"Hvilke udfordringer har du haft — og hvad føler du kunne forbedre sig?\"", "Alternativ — \"Hvis du skulle gå med en anden udbyder — hvad skulle den udbyder have for at det er interessant?\""] },
     exampleQuestions: [
-      { q: "Hvad har du i dag?", note: "Forstå hvad de har nu og hvordan de løser det i dag (SPIN: Situation)" },
-      { q: "Hvad er den største udfordring I har med det i dag?", note: "Afdæk smertepunktet direkte (SPIN: Problem)" },
-      { q: "Hvad koster det jer, hvis det ikke bliver løst i år?", note: "Forstør konsekvensen og skab urgency (SPIN: Implication)" },
-      { q: "Hvis det her var løst — hvad ville det betyde for jer?", note: "Lad kunden male værdien med egne ord (SPIN: Need-Payoff)" },
-      { q: "Hvad var årsagen til at du valgte den løsning du har i dag?", note: "Afslører hvad der drev beslutningen og hvad der er vigtigt for dem" },
-      { q: "Hvad skal vi kunne gøre, før noget overhovedet vil være interessant for jer?", note: "Forstå hvad de savner og hvad der skal til for at de handler" },
-      { q: "Hvis du selv kunne styre alt — hvad ville du ændre?", note: "Få dem til at male den ideelle løsning selv. Det er præcis hvad du sælger dem." },
+      { q: "Kan du hjælpe mig med at forstå — hvad er årsagen til at du overhovedet er på udkig efter det her?", note: "Årsag — udfordrer kunden konstruktivt og bygger tillid. Ingen andre sælgere stiller dette spørgsmål." },
+      { q: "Hvad gør du/I lige nu for at løse eller håndtere det?", note: "Status — forstå hvad de gør i dag og om det virker. Kunden begynder at sætte ord på problemet selv." },
+      { q: "Hvad føler du går godt med det du gør i dag?", note: "Effekt — lad dem selv fortælle hvad der virker. Det giver dig kontrast til forbedringerne." },
+      { q: "Hvilke udfordringer har du haft — og hvad føler du kunne forbedre sig?", note: "Forbedringer/Udfordringer — nu åbner de op om problemerne med egne ord." },
+      { q: "Hvis du skulle gå med en anden udbyder end dem du har i dag — hvad skulle den udbyder have for at det er interessant for dig?", note: "Alternativ — de maler selv den ideelle løsning for dig. Det er præcis hvad du sælger dem." },
+      { q: "Har jeg forstået det korrekt, at det primære problem er [X] og at det koster jer [Y]?", note: "Opsummering — viser du lyttede, positionerer dig som ekspert og giver kunden mulighed for at bekræfte." },
     ],
   },
   {
@@ -687,7 +745,7 @@ const QUIZ: QuizQuestion[] = [
   { topic: "Aktiv lytning", q: "Hvad er det øverste lytteniveau (som du bør stræbe efter)?", options: ["Registrere ord", "Forstå mening", "Empatisk lytning — forstå følelserne bag ordene", "Indre monolog"], correct: 2, explanation: "Empatisk lytning er det højeste niveau: du forstår ikke bare hvad kunden siger og hvorfor — du forstår de følelser der driver det. Det er her reel forbindelse opstår." },
 
   // ── Indvendingshåndtering (10 spørgsmål) ──
-  { topic: "Indvendingshåndtering", q: "Hvad står LAER-modellen for?", options: ["Lær, Analyser, Evaluér, Resultat", "Lyt, Anerkend, Empati & Udforsk, Reager", "Lyt, Argumentér, Evaluér, Reager", "Led, Anerkend, Effektivér, Reaktion"], correct: 1, explanation: "LAER er det mest gennemprøvede framework til indvendingshåndtering (Jack Carew, 1976): Lyt → Anerkend → Empati & Udforsk → Reager. Rækkefølgen er afgørende — ingen reaktion før du har lyttet og forstået." },
+  { topic: "Indvendingshåndtering", q: "Hvad står LAER-modellen for?", options: ["Lær, Analyser, Evaluér, Resultat", "Lyt, Anerkend + empati, Efterforsk, Reager", "Lyt, Argumentér, Evaluér, Reager", "Led, Anerkend, Effektivér, Reaktion"], correct: 1, explanation: "LAER: Lyt → Anerkend + vis empati → Efterforsk ('du fortalte mig også at X var vigtigt, ik?') → Reager ('og derfor betaler du lidt mere — fordi du præcis får de fordele du sagde var vigtige. Hvad synes du selv?'). Rækkefølgen er afgørende — ingen reaktion før du har lyttet og forstået." },
   { topic: "Indvendingshåndtering", q: "Hvad er Spejlings-teknikken?", options: ["At kopiere kundens kropssprog", "At gentage kundens sidste 2-3 ord i en spørgende tone så de uddyber frivilligt", "At vise kunden et spejl af deres problem", "At reflektere kundens egne ord direkte tilbage"], correct: 1, explanation: "Kunde: 'Vi vil gerne tilmelde os, men jeres produkt er lidt uden for vores budget.' Sælger: 'Uden for jeres budget?' → Kunden uddyber frivilligt hvad budget faktisk betyder for dem." },
   { topic: "Indvendingshåndtering", q: "Hvad er Labeling-teknikken i indvendingshåndtering?", options: ["At sætte en etikette på produktets fordele", "At sætte ord på den emotion du observerer hos kunden — det fremkalder ufiltrerede svar", "At kategorisere indvendingstypen inden du svarer", "At navngive den type kunde du har med at gøre"], correct: 1, explanation: "'Det lyder som om integrationen bekymrer dig.' → Kunden: 'Ja, faktisk — vi har haft problemer med det tidligere.' Labeling omgår den analytiske del af hjernen og fremkalder ægte svar." },
   { topic: "Indvendingshåndtering", q: "Hvad er Accusation Audit?", options: ["En gennemgang af kundens tidligere leverandørproblemer", "At proaktivt tage fat på alt det negative kunden måske tænker — inden de siger det", "En teknik til at finde kundens budget", "At stille kunden til ansvar for en fejlbeslutning"], correct: 1, explanation: "'Du tænker sikkert at det her lyder dyrt, og at dit team allerede har for mange værktøjer at lære.' Kunden siger: 'Nej, faktisk...' — du afvæbner spændinger før de opstår og vender bevisbyrden." },
