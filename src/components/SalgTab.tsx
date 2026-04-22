@@ -268,6 +268,15 @@ const TOPICS: Topic[] = [
         ],
       },
       {
+        emoji: "🔁",
+        heading: "Anerkend — redirect til ideen — kobl til behov",
+        body: "Når kunden rejser en indvending, anerkend dem kort og redirect straks til om selve ideen giver mening. Når de bekræfter ideen, kobl det direkte til det de selv har sagt: du får præcis det du beskrev.",
+        examples: [
+          "\"Jeg hører hvad du siger, og kan godt forstå dig — men hurtigt spørgsmål: giver ideen her mening? Kan du lide ideen?\" [Ja, det er det vel] → \"Præcis — fordi det du sagde med [X] er jo præcis det du får. Du får X, Y og Z, og dit problem med X bliver løst med Y, og det giver dig Z.\"",
+          "Teknikken virker fordi kunden allerede har valideret ideen med deres eget ja. Resten er bare at minde dem om at løsningen leverer præcis det de selv beskrev som vigtigt.",
+        ],
+      },
+      {
         emoji: "🏋️",
         heading: "Træn indvendinger aktivt med LAER-modellen",
         body: "Skriv alle indvendinger du møder ned og lav konkrete øvelseseksempler med LAER (Lyt → Anerkend + empati → Efterforsk → Reager). Toppræsterende sælgere øver indvendingshåndtering til de kan det i søvne. Træning er ikke noget der sker én gang.",
@@ -798,6 +807,42 @@ const TOPICS: Topic[] = [
         examples: [
           "\"Hvordan lyder det indtil videre?\" → Positivt svar: fortsæt mod closing. Negativt svar: du har stadig rum til at justere.",
           "\"På en skala fra 1-10 — hvor tæt er vi på at komme videre?\" → De siger 7: \"Hvad mangler for at det er en 10?\" → De afslører præcis hvad der holder dem igen.",
+        ],
+      },
+      {
+        emoji: "❤️",
+        heading: "Føler du at det her er det rette for dig?",
+        body: "En empatisk close der inviterer kunden til selv at sætte ord på værdien. Kombinér pause, årsagsspørgsmål og specifikhedsspørgsmål — og lad kunden lande naturligt på beslutningen.",
+        examples: [
+          "\"Føler du at det her kunne være…\" [pause] \"…det rette for dig — svaret for dig?\" [Ja] → \"Okay fedt, hvad får dig til at sige det?\" [Kunden fortæller] → \"Hvilke specifikke aspekter af alt det vi har gennemgået, føler du, vil hjælpe dig mest?\" [Kunden svarer] → \"Jamen jeg har egentlig ikke mere at sige — det lyder som om du kan lide ideen og synes den er fornuftig. Vil det så være passende at vi går videre?\"",
+          "Pausen efter 'kunne være' er afgørende — den giver kunden rum til at mærke efter. Når de svarer, graver du dybere med årsagsspørgsmålet, og til sidst fremstår closing som en logisk konsekvens af det de selv sagde.",
+        ],
+      },
+      {
+        emoji: "💡",
+        heading: "Giver det mening? → Kan du lide ideen? → Er prisen fornuftig? → Skal vi gå videre?",
+        body: "En tre-trins close der bygger sammenhængende ja'er: forståelse → lyst → pris → beslutning. Hvert skridt bekræfter det forrige og gør det endelige ja til det eneste logiske svar.",
+        examples: [
+          "\"Ift. det vi har gennemgået og det jeg har vist dig — giver det nogenlunde mening?\" [Ja] → \"Fedt, og hvad dine tanker — kan du lide ideen?\" [Ja] → \"Super, det er jo det vigtigste. Og du synes også at prisen er fornuftig?\" [Ja] → \"Jamen det virker som om alting er på plads — er det okay med dig at vi går videre?\"",
+          "Sekvensen er designet så hvert ja naturligt leder til det næste. Kunden sætter ikke spørgsmålstegn ved closing fordi de allerede har bekræftet alle tre forudsætninger.",
+        ],
+      },
+      {
+        emoji: "⚖️",
+        heading: "A eller B — hvilken læner du dig imod?",
+        body: "Tilbyd to konkrete muligheder og spørg hvilken kunden læner sig imod. Det eliminerer ja/nej og giver kunden ejerskab over valget — begge svarer er et ja.",
+        examples: [
+          "\"Hvilken en læner du dig helst imod? Vil du hellere gå med PC1 til 7.500 kr. eller PC2 til 10.000 kr.?\" → Uanset svar har kunden valgt — og valgt at købe.",
+          "Brug altid konkrete navne og priser. Jo mere specifikt valget er, desto mere reelt føles det for kunden — og desto lettere er det at svare.",
+        ],
+      },
+      {
+        emoji: "✔️",
+        heading: "Det dækker dine behov og virker fornuftigt — er det korrekt forstået?",
+        body: "Opsummer hele samtalen i ét spørgsmål, få en bekræftelse, og gør derefter closing til en logisk konklusion: hvis alt er på plads, ville det så give mening IKKE at gå videre?",
+        examples: [
+          "\"Men det virker som om alt det vi har gennemgået dækker dine behov — og at du synes det er fornuftigt til en god pris. Er det korrekt forstået?\" [Ja] → \"Super, jamen — vil det være en dum idé hvis vi gik videre?\"",
+          "Formuleringen 'vil det være en dum idé' er bevidst. Kunden har netop bekræftet at alt giver mening og prisen er fornuftig — det er næsten umuligt at sige ja til at det er en dum idé.",
         ],
       },
     ],
