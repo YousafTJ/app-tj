@@ -5,11 +5,9 @@ import { useRouter } from "next/navigation";
 import DashboardTab from "@/components/DashboardTab";
 import UdgifterTab from "@/components/UdgifterTab";
 import SkatTab from "@/components/SkatTab";
-import TodoTab from "@/components/TodoTab";
 import FlashcardsTab from "@/components/FlashcardsTab";
 import JeopardyTab from "@/components/JeopardyTab";
 import GamesTab from "@/components/GamesTab";
-import ShoppingListTab from "@/components/ShoppingListTab";
 import DomainCheckTab from "@/components/DomainCheckTab";
 import ToolsTab from "@/components/ToolsTab";
 import StocksTab from "@/components/StocksTab";
@@ -19,22 +17,37 @@ import SalgTab from "@/components/SalgTab";
 import DetPerfekteSalgTab from "@/components/DetPerfekteSalgTab";
 import KundeforståelseTab from "@/components/KundeforståelseTab";
 import SalgsSpilTab from "@/components/SalgsSpilTab";
+import BeslutningTab from "@/components/BeslutningTab";
+import CVRTab from "@/components/CVRTab";
+import KalorierForbrændtTab from "@/components/KalorierForbrændtTab";
+import SSLTab from "@/components/SSLTab";
+import WHOISTab from "@/components/WHOISTab";
+import EmailValidateTab from "@/components/EmailValidateTab";
+import IPGeoTab from "@/components/IPGeoTab";
+import TechStackTab from "@/components/TechStackTab";
+import JSONFormatterTab from "@/components/JSONFormatterTab";
+import APITesterTab from "@/components/APITesterTab";
 import { Settings, LogOut, CheckSquare, Menu, X, ChevronRight } from "lucide-react";
 import { FloatingNav, MenuItem, NavItem, DropdownLink } from "@/components/ui/navbar-menu";
 
 type TabId =
-  | "dashboard" | "todos" | "flashkort" | "jeopardy"
+  | "dashboard" | "flashkort" | "jeopardy"
   | "udgifter" | "skat" | "indstillinger" | "spil"
-  | "indkob" | "domæne" | "værktøjer"
-  | "aktier" | "genveje" | "fitness" | "salg" | "perfekt-salg" | "kundeforståelse" | "salgs-spil";
+  | "domæne" | "ssl" | "whois" | "emailval" | "ipgeo" | "techstack" | "jsonformat" | "apitester" | "værktøjer"
+  | "aktier" | "genveje" | "fitness" | "salg" | "perfekt-salg" | "kundeforståelse" | "salgs-spil"
+  | "beslutning" | "cvr" | "kalorier";
 
 const TAB_LABELS: Record<TabId, string> = {
-  dashboard: "🏠 Dashboard", todos: "✅ To-do", flashkort: "🃏 Flashkort",
+  dashboard: "🏠 Dashboard", flashkort: "🃏 Flashkort",
   jeopardy: "🎯 Jeopardy", udgifter: "💸 Udgifter", skat: "🧾 Skat",
-  indstillinger: "⚙️ Indstillinger", spil: "🎮 Spil", indkob: "🛒 Indkøbsliste",
-  domæne: "🔍 Domæne-tjek", værktøjer: "🔧 Værktøjer", aktier: "📈 Aktier",
+  indstillinger: "⚙️ Indstillinger", spil: "🎮 Spil",
+  domæne: "🔍 Domæne-tjek", ssl: "🔒 SSL-tjekker", whois: "🌐 WHOIS-opslag", emailval: "✉️ Email-validering",
+  ipgeo: "🌍 IP-geolocation", techstack: "🔭 Tech-stack detektor", jsonformat: "{ } JSON formatter", apitester: "⚡ API tester",
+  værktøjer: "🔧 Værktøjer", aktier: "📈 Aktier",
   genveje: "⌨️ Genveje", fitness: "💪 Fitness", salg: "💼 Salg",
   "perfekt-salg": "🏆 Perfekt Salg", "kundeforståelse": "🧠 Forstå Kunden", "salgs-spil": "🎮 Salgs-spillet",
+  beslutning: "🪙 Beslutning",
+  cvr: "🏢 CVR-opslag", kalorier: "🔥 Kalorier-forbrændt",
 };
 
 const MOBILE_SECTIONS = [
@@ -42,14 +55,12 @@ const MOBILE_SECTIONS = [
     label: "Primært",
     items: [
       { id: "dashboard" as TabId, label: "🏠 Dashboard" },
-      { id: "todos"     as TabId, label: "✅ To-do" },
       { id: "salg"            as TabId, label: "💼 Salg" },
       { id: "perfekt-salg"   as TabId, label: "🏆 Perfekt Salg" },
       { id: "kundeforståelse" as TabId, label: "🧠 Forstå Kunden" },
       { id: "salgs-spil"     as TabId, label: "🎮 Salgs-spillet" },
       { id: "fitness"   as TabId, label: "💪 Fitness" },
       { id: "aktier"    as TabId, label: "📈 Aktier" },
-      { id: "indkob"    as TabId, label: "🛒 Indkøb" },
     ],
   },
   {
@@ -60,14 +71,39 @@ const MOBILE_SECTIONS = [
     ],
   },
   {
+    label: "IT-redskaber",
+    items: [
+      { id: "domæne"     as TabId, label: "🔍 Domæne-tjek" },
+      { id: "ssl"        as TabId, label: "🔒 SSL-tjekker" },
+      { id: "whois"      as TabId, label: "🌐 WHOIS-opslag" },
+      { id: "emailval"   as TabId, label: "✉️ Email-validering" },
+      { id: "ipgeo"      as TabId, label: "🌍 IP-geolocation" },
+      { id: "techstack"  as TabId, label: "🔭 Tech-stack" },
+      { id: "jsonformat" as TabId, label: "{ } JSON formatter" },
+      { id: "apitester"  as TabId, label: "⚡ API tester" },
+    ],
+  },
+  {
     label: "Øvrige",
     items: [
       { id: "udgifter"      as TabId, label: "💸 Udgifter" },
       { id: "skat"          as TabId, label: "🧾 Skat" },
-      { id: "domæne"        as TabId, label: "🔍 Domæne-tjek" },
       { id: "genveje"       as TabId, label: "⌨️ Genveje" },
       { id: "værktøjer"     as TabId, label: "🔧 Værktøjer" },
       { id: "indstillinger" as TabId, label: "⚙️ Indstillinger" },
+    ],
+  },
+  {
+    label: "Karriere",
+    items: [
+      { id: "cvr" as TabId, label: "🏢 CVR-opslag" },
+    ],
+  },
+  {
+    label: "Livsstil",
+    items: [
+      { id: "kalorier"   as TabId, label: "🔥 Kalorier-forbrændt" },
+      { id: "beslutning" as TabId, label: "🪙 Beslutning" },
     ],
   },
 ];
@@ -127,7 +163,6 @@ export default function Home() {
             <Sep />
 
             <NavItem label="Dashboard" active={activeTab === "dashboard"} onClick={() => goTo("dashboard")} />
-            <NavItem label="To-do"     active={activeTab === "todos"}     onClick={() => goTo("todos")} />
 
             <MenuItem setActive={setActiveMenu} active={activeMenu} item="Datamatiker">
               <div style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 160 }}>
@@ -138,14 +173,32 @@ export default function Home() {
 
             <NavItem label="🎮 Spil" active={activeTab === "spil"} onClick={() => goTo("spil")} />
 
-            <NavItem label="🛒 Indkøbsliste" active={activeTab === "indkob"}   onClick={() => goTo("indkob")} />
-            <NavItem label="💸 Udgifter"     active={activeTab === "udgifter"} onClick={() => goTo("udgifter")} />
-            <NavItem label="🔍 Domæne-tjek"  active={activeTab === "domæne"}   onClick={() => goTo("domæne")} />
+            <NavItem label="💸 Udgifter" active={activeTab === "udgifter"} onClick={() => goTo("udgifter")} />
+
+            <MenuItem setActive={setActiveMenu} active={activeMenu} item="IT-redskaber">
+              <div style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 180 }}>
+                <DropdownLink onClick={() => goTo("domæne")}    active={activeTab === "domæne"}>🔍 Domæne-tjek</DropdownLink>
+                <DropdownLink onClick={() => goTo("ssl")}      active={activeTab === "ssl"}>🔒 SSL-tjekker</DropdownLink>
+                <DropdownLink onClick={() => goTo("whois")}    active={activeTab === "whois"}>🌐 WHOIS-opslag</DropdownLink>
+                <DropdownLink onClick={() => goTo("emailval")} active={activeTab === "emailval"}>✉️ Email-validering</DropdownLink>
+                <DropdownLink onClick={() => goTo("ipgeo")}    active={activeTab === "ipgeo"}>🌍 IP-geolocation</DropdownLink>
+                <DropdownLink onClick={() => goTo("techstack")} active={activeTab === "techstack"}>🔭 Tech-stack</DropdownLink>
+                <DropdownLink onClick={() => goTo("jsonformat")} active={activeTab === "jsonformat"}>{"{ }"} JSON formatter</DropdownLink>
+                <DropdownLink onClick={() => goTo("apitester")} active={activeTab === "apitester"}>⚡ API tester</DropdownLink>
+              </div>
+            </MenuItem>
 
             <NavItem label="📈 Aktier"    active={activeTab === "aktier"}    onClick={() => goTo("aktier")} />
             <NavItem label="⌨️ Genveje"  active={activeTab === "genveje"}   onClick={() => goTo("genveje")} />
             <NavItem label="🔧 Værktøjer" active={activeTab === "værktøjer"} onClick={() => goTo("værktøjer")} />
             <NavItem label="💪 Fitness"   active={activeTab === "fitness"}   onClick={() => goTo("fitness")} />
+            <NavItem label="🏢 CVR-opslag" active={activeTab === "cvr"} onClick={() => goTo("cvr")} />
+            <MenuItem setActive={setActiveMenu} active={activeMenu} item="Livsstil">
+              <div style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 160 }}>
+                <DropdownLink onClick={() => goTo("kalorier")}   active={activeTab === "kalorier"}>🔥 Kalorier-forbrændt</DropdownLink>
+                <DropdownLink onClick={() => goTo("beslutning")} active={activeTab === "beslutning"}>🪙 Beslutning</DropdownLink>
+              </div>
+            </MenuItem>
             <MenuItem setActive={setActiveMenu} active={activeMenu} item="Salg">
               <div style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 160 }}>
                 <DropdownLink onClick={() => goTo("salg")}            active={activeTab === "salg"}>💼 Salg</DropdownLink>
@@ -325,12 +378,17 @@ export default function Home() {
         style={{ maxWidth: 1200, margin: "0 auto", padding: "88px 24px 40px" }}
       >
         {activeTab === "dashboard"     && <DashboardTab />}
-        {activeTab === "todos"         && <TodoTab />}
         {activeTab === "flashkort"     && <FlashcardsTab />}
         {activeTab === "jeopardy"      && <JeopardyTab />}
         {activeTab === "spil"          && <GamesTab />}
-        {activeTab === "indkob"        && <ShoppingListTab />}
         {activeTab === "domæne"        && <DomainCheckTab />}
+        {activeTab === "ssl"           && <SSLTab />}
+        {activeTab === "whois"         && <WHOISTab />}
+        {activeTab === "emailval"      && <EmailValidateTab />}
+        {activeTab === "ipgeo"         && <IPGeoTab />}
+        {activeTab === "techstack"     && <TechStackTab />}
+        {activeTab === "jsonformat"    && <JSONFormatterTab />}
+        {activeTab === "apitester"     && <APITesterTab />}
         {activeTab === "udgifter"      && <UdgifterTab />}
         {activeTab === "skat"          && <SkatTab />}
         {activeTab === "indstillinger" && <IndstillingerPlaceholder />}
@@ -342,6 +400,9 @@ export default function Home() {
         {activeTab === "perfekt-salg"   && <DetPerfekteSalgTab />}
         {activeTab === "kundeforståelse" && <KundeforståelseTab />}
         {activeTab === "salgs-spil"      && <SalgsSpilTab />}
+        {activeTab === "beslutning"      && <BeslutningTab />}
+        {activeTab === "cvr"             && <CVRTab />}
+        {activeTab === "kalorier"        && <KalorierForbrændtTab />}
       </main>
     </div>
   );

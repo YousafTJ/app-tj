@@ -180,6 +180,47 @@ function detectTech(html: string, headers: Record<string, string>): TechStack {
   return tech;
 }
 
+// ─── Mail provider detection ──────────────────────────────────────────────────
+
+function detectMailProvider(mxRecords: string[]): string | undefined {
+  const all = mxRecords.join(" ").toLowerCase();
+  if (all.includes("google") || all.includes("googlemail")) return "Google Workspace";
+  if (all.includes("outlook") || all.includes("hotmail") || all.includes("microsoft")) return "Microsoft 365";
+  if (all.includes("zoho")) return "Zoho Mail";
+  if (all.includes("mailgun")) return "Mailgun";
+  if (all.includes("sendgrid")) return "SendGrid";
+  if (all.includes("amazonses") || all.includes("aws")) return "Amazon SES";
+  if (all.includes("protonmail")) return "ProtonMail";
+  if (all.includes("fastmail")) return "Fastmail";
+  if (all.includes("mimecast")) return "Mimecast";
+  if (all.includes("pphosted")) return "Proofpoint";
+  if (all.includes("messagelabs")) return "Broadcom Email Security";
+  if (all.includes("mailchimp") || all.includes("mandrillapp")) return "Mailchimp/Mandrill";
+  if (all.includes("yandex")) return "Yandex Mail";
+  return undefined;
+}
+
+// ─── DKIM check ───────────────────────────────────────────────────────────────
+
+interface DkimResult { selector: string; found: boolean; value?: string; }
+
+async function checkDkim(hostname: string): Promise<DkimResult[]> {
+  const selectors = ["google", "selector1", "selector2", "default", "mail", "k1", "s1", "s2", "dkim", "zoho", "pm"];
+  const results: DkimResult[] = [];
+
+  await Promise.all(
+    selectors.map(async sel => {
+      try {
+        const records = await dns.resolveTxt(`${sel}._domainkey.${hostname}`);
+        const value = records.map(r => r.join("")).find(r => r.includes("v=DKIM1") || r.includes("k=rsa") || r.includes("p="));
+        if (value) results.push({ selector: sel, found: true, value: value.slice(0, 80) + (value.length > 80 ? "…" : "") });
+      } catch { /* selector not found */ }
+    })
+  );
+
+  return results;
+}
+
 // ─── DNS lookup ───────────────────────────────────────────────────────────────
 
 export interface DnsInfo {
@@ -187,6 +228,9 @@ export interface DnsInfo {
   ipGeo?: { country?: string; city?: string; org?: string; isp?: string };
   nameservers?: string[];
   mx?: string[];
+  mxRaw?: string[];
+  mailProvider?: string;
+  dkim?: DkimResult[];
   txt?: string[];
   spf?: string;
   dmarc?: string;
@@ -214,11 +258,14 @@ async function lookupDnsInfo(hostname: string): Promise<DnsInfo> {
   }).catch(() => { /* no NS */ });
 
   // MX records
+  let mxExchanges: string[] = [];
   await dns.resolveMx(hostname).then(mx => {
     if (mx.length > 0) {
-      info.mx = mx
-        .sort((a, b) => a.priority - b.priority)
-        .map(r => `${r.exchange} (prio ${r.priority})`);
+      const sorted = mx.sort((a, b) => a.priority - b.priority);
+      mxExchanges = sorted.map(r => r.exchange);
+      info.mx = sorted.map(r => `${r.exchange} (prio ${r.priority})`);
+      info.mxRaw = mxExchanges;
+      info.mailProvider = detectMailProvider(mxExchanges);
     }
   }).catch(() => { /* no MX */ });
 
@@ -241,6 +288,9 @@ async function lookupDnsInfo(hostname: string): Promise<DnsInfo> {
     const dmarc = records.map(r => r.join("")).find(r => r.startsWith("v=DMARC1"));
     if (dmarc) info.dmarc = dmarc;
   }).catch(() => { /* no DMARC */ });
+
+  // DKIM (run after MX so we know which selectors are likely)
+  info.dkim = await checkDkim(hostname);
 
   return info;
 }
@@ -280,8 +330,21 @@ export async function GET(req: NextRequest) {
     })(),
   ]);
 
+  // If fetch failed but DNS worked, still return DNS/mail info (mail-only domains have no website)
   if (!fetchResult) {
-    return NextResponse.json({ error: "Kunne ikke hente siden. Er URL'en korrekt?" }, { status: 422 });
+    const hasDnsData = dnsInfo.ip || (dnsInfo.mx?.length ?? 0) > 0 || (dnsInfo.nameservers?.length ?? 0) > 0;
+    if (!hasDnsData) {
+      return NextResponse.json({ error: "Domænet blev ikke fundet — hverken DNS eller hjemmeside." }, { status: 422 });
+    }
+    return NextResponse.json({
+      url: `https://${hostname}`,
+      hostname,
+      statusCode: null,
+      mailOnly: true,
+      contacts: [],
+      tech: null,
+      dnsInfo,
+    });
   }
 
   const { html, responseHeaders, finalUrl, statusCode } = fetchResult;
@@ -298,6 +361,7 @@ export async function GET(req: NextRequest) {
     url: finalUrl,
     hostname,
     statusCode,
+    mailOnly: false,
     contacts,
     tech,
     dnsInfo,

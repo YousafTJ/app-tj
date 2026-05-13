@@ -11,20 +11,24 @@ interface TechStack {
   frameworks?: string[];
   analytics?: string[];
 }
+interface DkimResult { selector: string; found: boolean; value?: string; }
 interface DnsInfo {
   ip?: string;
   ipGeo?: { country?: string; city?: string; org?: string; isp?: string };
   nameservers?: string[];
   mx?: string[];
+  mailProvider?: string;
+  dkim?: DkimResult[];
   txt?: string[];
   spf?: string;
   dmarc?: string;
   ssl?: { valid: boolean };
 }
 interface DomainResult {
-  url: string; hostname: string; statusCode: number;
+  url: string; hostname: string; statusCode: number | null;
+  mailOnly?: boolean;
   contacts: Contact[];
-  tech?: TechStack;
+  tech?: TechStack | null;
   dnsInfo?: DnsInfo;
 }
 
@@ -35,8 +39,12 @@ export default function DomainCheckTab() {
   const [error, setError]     = useState("");
 
   async function check() {
-    const u = url.trim();
+    let u = url.trim();
     if (!u) return;
+    // If input looks like an email, extract the domain
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(u)) {
+      u = u.split("@")[1];
+    }
     setLoading(true); setError(""); setResult(null);
     try {
       const res = await fetch(`/api/domain-check?url=${encodeURIComponent(u)}`);
@@ -52,7 +60,7 @@ export default function DomainCheckTab() {
 
   const tech = result?.tech;
   const dns  = result?.dnsInfo;
-  const hasTech = tech && (
+  const hasTech = !result?.mailOnly && tech && (
     tech.hosting || tech.server || tech.cms ||
     (tech.frameworks?.length ?? 0) > 0 ||
     (tech.analytics?.length ?? 0) > 0 ||
@@ -62,6 +70,18 @@ export default function DomainCheckTab() {
     dns.ip || (dns.nameservers?.length ?? 0) > 0 ||
     (dns.mx?.length ?? 0) > 0 || dns.spf || dns.dmarc
   );
+  const hasMail = dns && (
+    (dns.mx?.length ?? 0) > 0 || dns.spf || dns.dmarc ||
+    (dns.dkim?.length ?? 0) > 0
+  );
+
+  // Mail security score 0-4
+  const mailScore = hasMail ? [
+    (dns!.mx?.length ?? 0) > 0,
+    !!dns!.spf,
+    !!dns!.dmarc,
+    (dns!.dkim?.length ?? 0) > 0,
+  ].filter(Boolean).length : 0;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
@@ -69,7 +89,7 @@ export default function DomainCheckTab() {
       <div>
         <h1 style={{ fontSize: 28, fontWeight: 800, color: "var(--text)", margin: "0 0 6px" }}>Domæne-tjek</h1>
         <p style={{ fontSize: 15, color: "var(--text-2)", margin: 0 }}>
-          Indsæt en hjemmeside og få DNS-info, IP, teknologi og kontaktpersoner
+          Indsæt en hjemmeside eller e-mailadresse og få DNS-info, mailserver, teknologi og kontaktpersoner
         </p>
       </div>
 
@@ -81,7 +101,7 @@ export default function DomainCheckTab() {
               value={url}
               onChange={e => setUrl(e.target.value)}
               onKeyDown={e => e.key === "Enter" && check()}
-              placeholder="https://example.com eller bare example.com"
+              placeholder="example.com eller navn@example.com"
               className="uv-input"
               style={{ flex: 1, fontSize: 15 }}
             />
@@ -106,14 +126,24 @@ export default function DomainCheckTab() {
         <>
           {/* Status bar */}
           <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-            <span style={{
-              padding: "4px 12px", borderRadius: 99, fontSize: 12, fontWeight: 700,
-              background: result.statusCode === 200 ? "rgba(163,230,53,0.15)" : "rgba(248,113,113,0.15)",
-              color: result.statusCode === 200 ? "#a3e635" : "#f87171",
-              border: `1.5px solid ${result.statusCode === 200 ? "rgba(163,230,53,0.3)" : "rgba(248,113,113,0.3)"}`,
-            }}>
-              {result.statusCode === 200 ? "✓ Online" : `HTTP ${result.statusCode}`}
-            </span>
+            {result.mailOnly ? (
+              <span style={{
+                padding: "4px 12px", borderRadius: 99, fontSize: 12, fontWeight: 700,
+                background: "rgba(251,191,36,0.15)", color: "#fbbf24",
+                border: "1.5px solid rgba(251,191,36,0.35)",
+              }}>
+                ✉️ Mail-only domæne
+              </span>
+            ) : (
+              <span style={{
+                padding: "4px 12px", borderRadius: 99, fontSize: 12, fontWeight: 700,
+                background: result.statusCode === 200 ? "rgba(163,230,53,0.15)" : "rgba(248,113,113,0.15)",
+                color: result.statusCode === 200 ? "#a3e635" : "#f87171",
+                border: `1.5px solid ${result.statusCode === 200 ? "rgba(163,230,53,0.3)" : "rgba(248,113,113,0.3)"}`,
+              }}>
+                {result.statusCode === 200 ? "✓ Online" : `HTTP ${result.statusCode}`}
+              </span>
+            )}
             <span style={{ fontSize: 13, color: "var(--text-3)" }}>{result.hostname}</span>
             {dns?.ip && (
               <span style={{
@@ -186,8 +216,101 @@ export default function DomainCheckTab() {
             </div>
           )}
 
-          {/* Tech stack */}
-          <div className="uv-card-1">
+          {/* Mail section */}
+          {hasMail && (
+            <div className="uv-card-1">
+              <div className="uv-card-1-inner" style={{ padding: "20px 22px" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
+                  <p style={{ fontSize: 15, fontWeight: 700, color: "#1c1917", margin: 0 }}>
+                    ✉️ Mail-opsætning
+                  </p>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    {[0,1,2,3].map(i => (
+                      <div key={i} style={{
+                        width: 10, height: 10, borderRadius: "50%",
+                        background: i < mailScore
+                          ? (mailScore === 4 ? "#4ade80" : mailScore >= 3 ? "#facc15" : "#f87171")
+                          : "rgba(255,255,255,0.1)",
+                        border: `1.5px solid ${i < mailScore ? "transparent" : "rgba(255,255,255,0.15)"}`,
+                      }} />
+                    ))}
+                    <span style={{ fontSize: 11, fontWeight: 700, marginLeft: 4, color:
+                      mailScore === 4 ? "#4ade80" : mailScore >= 3 ? "#facc15" : mailScore >= 2 ? "#fb923c" : "#f87171"
+                    }}>
+                      {mailScore === 4 ? "Sikker" : mailScore === 3 ? "God" : mailScore === 2 ? "Delvis" : "Svag"}
+                    </span>
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+
+                  {/* Mail provider */}
+                  {dns!.mailProvider && (
+                    <MailCheckRow label="Udbyder" value={dns!.mailProvider} status="info" />
+                  )}
+
+                  {/* MX */}
+                  <MailCheckRow
+                    label="MX-record"
+                    value={(dns!.mx?.length ?? 0) > 0 ? dns!.mx![0] : undefined}
+                    status={(dns!.mx?.length ?? 0) > 0 ? "ok" : "missing"}
+                    missingText="Ingen MX-records fundet"
+                  />
+
+                  {/* SPF */}
+                  <MailCheckRow
+                    label="SPF"
+                    value={dns!.spf}
+                    status={dns!.spf ? "ok" : "missing"}
+                    missingText="Ingen SPF-record — afsendere kan ikke verificeres"
+                  />
+
+                  {/* DMARC */}
+                  <MailCheckRow
+                    label="DMARC"
+                    value={dns!.dmarc}
+                    status={dns!.dmarc ? "ok" : "missing"}
+                    missingText="Ingen DMARC-record — risiko for spoofing"
+                  />
+
+                  {/* DKIM */}
+                  {(dns!.dkim?.length ?? 0) > 0 ? (
+                    dns!.dkim!.map(d => (
+                      <MailCheckRow
+                        key={d.selector}
+                        label={`DKIM (${d.selector})`}
+                        value={d.value}
+                        status="ok"
+                      />
+                    ))
+                  ) : (
+                    <MailCheckRow
+                      label="DKIM"
+                      status="missing"
+                      missingText="Ingen DKIM-nøgle fundet (tjekket 11 selektorer)"
+                    />
+                  )}
+
+                  {/* Extra MX records */}
+                  {(dns!.mx?.length ?? 0) > 1 && (
+                    <div style={{ padding: "8px 12px", borderRadius: 8, background: "rgba(0,221,235,0.04)", border: "1px solid rgba(0,221,235,0.1)" }}>
+                      <span style={{ fontSize: 11, color: "#00DDEB", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                        Alle MX-records
+                      </span>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 3, marginTop: 6 }}>
+                        {dns!.mx!.map((m, i) => (
+                          <span key={i} style={{ fontSize: 12, fontFamily: "monospace", color: "#1c1917" }}>{m}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tech stack — only for domains with a website */}
+          {!result.mailOnly && <div className="uv-card-1">
             <div className="uv-card-1-inner" style={{ padding: "20px 22px" }}>
               <p style={{ fontSize: 15, fontWeight: 700, color: "#1c1917", margin: "0 0 18px" }}>
                 🔍 Teknologi &amp; hosting
@@ -214,10 +337,10 @@ export default function DomainCheckTab() {
                 </p>
               )}
             </div>
-          </div>
+          </div>}
 
-          {/* Contacts */}
-          {result.contacts.length > 0 ? (
+          {/* Contacts — only for domains with a website */}
+          {!result.mailOnly && (result.contacts.length > 0 ? (
             <div className="uv-card-1">
               <div className="uv-card-1-inner" style={{ padding: "20px 22px" }}>
                 <p style={{ fontSize: 15, fontWeight: 700, color: "#1c1917", margin: "0 0 18px" }}>
@@ -273,7 +396,7 @@ export default function DomainCheckTab() {
                 </p>
               </div>
             </div>
-          )}
+          ))}
         </>
       )}
     </div>
@@ -322,6 +445,39 @@ function DnsMultiRow({ label, values, mono, truncate }: { label: string; values:
             {v}
           </span>
         ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Mail sub-component ───────────────────────────────────────────────────────
+
+function MailCheckRow({ label, value, status, missingText }: {
+  label: string;
+  value?: string;
+  status: "ok" | "missing" | "info";
+  missingText?: string;
+}) {
+  const colors = {
+    ok:      { bg: "rgba(74,222,128,0.07)", border: "rgba(74,222,128,0.2)", dot: "#4ade80", label: "#4ade80" },
+    missing: { bg: "rgba(248,113,113,0.07)", border: "rgba(248,113,113,0.2)", dot: "#f87171", label: "#f87171" },
+    info:    { bg: "rgba(0,221,235,0.06)", border: "rgba(0,221,235,0.18)", dot: "#00DDEB", label: "#00DDEB" },
+  }[status];
+
+  return (
+    <div style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "10px 14px", borderRadius: 10, background: colors.bg, border: `1px solid ${colors.border}` }}>
+      <div style={{ width: 8, height: 8, borderRadius: "50%", background: colors.dot, flexShrink: 0, marginTop: 4 }} />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <span style={{ fontSize: 11, fontWeight: 700, color: colors.label, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+          {label}
+        </span>
+        {value ? (
+          <p style={{ fontSize: 12, fontFamily: "monospace", color: "#1c1917", margin: "3px 0 0", wordBreak: "break-all" }}>
+            {value}
+          </p>
+        ) : missingText ? (
+          <p style={{ fontSize: 12, color: "var(--text-3)", margin: "3px 0 0", fontStyle: "italic" }}>{missingText}</p>
+        ) : null}
       </div>
     </div>
   );
