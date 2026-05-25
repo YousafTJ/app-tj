@@ -421,3 +421,248 @@
   to   { background-position: 350% 50%, 350% 50%; }
 }
 .animate-aurora { animation: aurora 8s linear infinite; }
+
+/* ── Design system: status badges ───────────────────────────────────────────── */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px; border-radius: 99px;
+  font-size: 12px; font-weight: 600; line-height: 1.5;
+  white-space: nowrap;
+}
+.badge-success { background: var(--green-light);  color: var(--green);  border: 1px solid #bbf7d0; }
+.badge-warning { background: var(--amber-light);  color: #92400e;       border: 1px solid #fde68a; }
+.badge-error   { background: var(--red-light);    color: var(--red);    border: 1px solid #fecaca; }
+.badge-info    { background: #eff6ff;             color: #1d4ed8;       border: 1px solid #bfdbfe; }
+.badge-neutral { background: var(--surface-2);   color: var(--text-2); border: 1px solid var(--border); }
+
+/* ── Typography: monospace for technical values ─────────────────────────────── */
+.mono { font-family: "JetBrains Mono", "Fira Code", ui-monospace, Consolas, monospace; font-size: 0.9em; }
+code { font-family: "JetBrains Mono", "Fira Code", ui-monospace, Consolas, monospace; }
+pre  { font-family: "JetBrains Mono", "Fira Code", ui-monospace, Consolas, monospace; overflow-x: auto; }
+
+/* ── Card hover utility ──────────────────────────────────────────────────────── */
+.hover-lift {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.09);
+}
+
+/* ── Mobile fixes (max-width: 767px) ────────────────────────────────────────── */
+@media (max-width: 767px) {
+
+  /* Prevent iOS font zoom on inputs */
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+
+  /* Pre/code — wrap on narrow screens */
+  pre {
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    overflow-x: auto !important;
+    max-width: 100% !important;
+    font-size: 12px !important;
+  }
+
+  /* Tables — horizontal scroll */
+  .table-scroll {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    max-width: 100% !important;
+  }
+
+  /* Touch target minimum everywhere */
+  button { min-height: 44px; }
+
+  /* ── KeyboardTab ── */
+  .keyboard-visual {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding-bottom: 8px !important;
+  }
+  .keyboard-row {
+    min-width: 660px !important;
+  }
+
+  /* ── IT Tools ── */
+
+  /* DomainCheckTab — result sections */
+  .domain-results-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  .domain-auth-row {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  /* SSLTab — ring */
+  .ssl-ring-container {
+    width: 140px !important;
+    height: 140px !important;
+  }
+  .ssl-details-layout {
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+
+  /* APITesterTab — split view */
+  .api-split-view {
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+  .api-headers-table {
+    overflow-x: auto !important;
+    display: block !important;
+  }
+
+  /* JSONFormatterTab */
+  .json-editor {
+    min-height: 180px !important;
+    font-size: 13px !important;
+  }
+  .json-layout {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  /* TechStackTab */
+  .techstack-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Log & Mail ── */
+
+  /* SpringBootLogTab — log output */
+  .springlog-output {
+    font-size: 12px !important;
+    padding: 12px !important;
+    overflow-x: auto !important;
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+  }
+  .springlog-stacktrace {
+    overflow-x: auto !important;
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    padding-left: 12px !important;
+  }
+
+  /* LogFilterTab — filter buttons + log lines */
+  .logfilter-controls {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+  .logfilter-line {
+    word-break: break-all !important;
+    white-space: pre-wrap !important;
+    overflow-x: auto !important;
+  }
+
+  /* EmailHeaderTab — auth boxes stack */
+  .email-auth-grid {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+  .email-header-split {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  .email-hop-row {
+    flex-direction: column !important;
+    gap: 4px !important;
+    align-items: flex-start !important;
+  }
+  .email-routing-chain {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+
+  /* EmailRoutingTab — flow steps vertical */
+  .email-routing-flow {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+  .email-routing-arrow {
+    transform: rotate(90deg) !important;
+    margin: 0 auto !important;
+  }
+
+  /* ── Finance / Livsstil ── */
+
+  /* UdgifterTab — table scroll */
+  .udgifter-table-container {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    max-width: 100% !important;
+  }
+  .udgifter-add-form {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+  .udgifter-summary-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+  .budget-split {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* StocksTab */
+  .stocks-chart-container {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* FitnessTab */
+  .fitness-input-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+
+  /* KalorierForbrændtTab */
+  .kalorier-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+
+  /* ── Spil ── */
+
+  /* JeopardyTab */
+  .jeopardy-grid {
+    gap: 3px !important;
+    font-size: 11px !important;
+  }
+  .jeopardy-cell {
+    min-height: 44px !important;
+    padding: 4px 2px !important;
+  }
+  .jeopardy-category {
+    font-size: 10px !important;
+    padding: 4px 2px !important;
+  }
+
+  /* FlashcardsTab */
+  .flashcard-container {
+    height: 200px !important;
+  }
+
+  /* ── Generic layout helpers ── */
+
+  /* Flex row → column */
+  .mobile-col { flex-direction: column !important; }
+
+  /* Grid → 1 column */
+  .mobile-1col { grid-template-columns: 1fr !important; }
+
+  /* Full width on mobile */
+  .mobile-full { width: 100% !important; max-width: 100% !important; }
+
+  /* Reduce font on mobile */
+  .mobile-text-sm { font-size: 13px !important; }
+}

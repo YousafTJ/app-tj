@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
+import * as XLSX from "xlsx";
 import {
   BarChart, Bar, LineChart, Line, AreaChart, Area,
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from "recharts";
 
 const card = { padding: "20px 22px" } as const;
@@ -54,7 +55,7 @@ function analyzePassword(pw: string) {
 }
 
 function PasswordChecker() {
-  const [pw, setPw]   = useState("");
+  const [pw, setPw]     = useState("");
   const [show, setShow] = useState(false);
   const info = useMemo(() => pw ? analyzePassword(pw) : null, [pw]);
 
@@ -112,196 +113,270 @@ function PasswordChecker() {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// 2. DATA → CHART
+// 2. FILE → CHART (Excel / CSV / Sheets upload)
 // ════════════════════════════════════════════════════════════════════════════
 
 type ChartType = "bar" | "line" | "area";
+type ParsedSheet = { headers: string[]; rows: Record<string, string | number>[] };
 
-function parseValues(raw: string): { name: string; value: number }[] | null {
-  const lines = raw.trim().split(/\n/).map(l => l.trim()).filter(Boolean);
-  if (lines.length < 1) return null;
-  const result: { name: string; value: number }[] = [];
-  for (const line of lines) {
-    const parts = line.split(/[,;\t]|  +/).map(p => p.trim()).filter(Boolean);
-    if (parts.length === 1) {
-      const v = parseFloat(parts[0].replace(",", "."));
-      if (!isNaN(v)) result.push({ name: `${result.length + 1}`, value: v });
-    } else {
-      const v = parseFloat(parts[parts.length - 1].replace(",", "."));
-      if (!isNaN(v)) result.push({ name: parts[0], value: v });
+const COLORS = ["#a78bfa", "#00DDEB", "#f59e0b", "#34d399", "#f87171", "#60a5fa", "#fb923c", "#4ade80"];
+const TOOLTIP_STYLE = { background: "#ffffff", border: "1.5px solid rgba(251,191,36,0.5)", borderRadius: 10, color: "#1c1917", fontSize: 12 };
+const AXIS_TICK     = { fill: "#a8a29e", fontSize: 11 };
+
+function parseFile(file: File): Promise<ParsedSheet[]> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = e.target?.result;
+        const wb   = XLSX.read(data, { type: "binary" });
+        const sheets: ParsedSheet[] = wb.SheetNames.map(name => {
+          const ws  = wb.Sheets[name];
+          const raw = XLSX.utils.sheet_to_json<Record<string, string | number>>(ws, { defval: "" });
+          if (raw.length === 0) return { headers: [], rows: [] };
+          const headers = Object.keys(raw[0]);
+          return { headers, rows: raw };
+        });
+        resolve(sheets);
+      } catch (err) {
+        reject(err);
+      }
+    };
+    reader.onerror = reject;
+    reader.readAsBinaryString(file);
+  });
+}
+
+function isNumericCol(rows: Record<string, string | number>[], col: string): boolean {
+  return rows.every(r => r[col] === "" || !isNaN(Number(r[col])));
+}
+
+function FileChart() {
+  const inputRef                   = useRef<HTMLInputElement>(null);
+  const [sheets, setSheets]        = useState<ParsedSheet[]>([]);
+  const [sheetIdx, setSheetIdx]    = useState(0);
+  const [labelCol, setLabelCol]    = useState<string>("");
+  const [valueCols, setValueCols]  = useState<string[]>([]);
+  const [chartType, setChartType]  = useState<ChartType>("bar");
+  const [fileName, setFileName]    = useState<string>("");
+  const [error, setError]          = useState<string>("");
+  const [loading, setLoading]      = useState(false);
+
+  const sheet      = sheets[sheetIdx] ?? null;
+  const numCols    = sheet ? sheet.headers.filter(h => h !== labelCol && isNumericCol(sheet.rows, h)) : [];
+  const chartData  = useMemo(() => {
+    if (!sheet || !labelCol) return null;
+    return sheet.rows.map(r => {
+      const point: Record<string, string | number> = { name: String(r[labelCol]) };
+      valueCols.forEach(col => { point[col] = Number(r[col]) || 0; });
+      return point;
+    });
+  }, [sheet, labelCol, valueCols]);
+
+  async function handleFile(f: File) {
+    setError(""); setLoading(true);
+    try {
+      const parsed = await parseFile(f);
+      setSheets(parsed);
+      setFileName(f.name);
+      setSheetIdx(0);
+      const firstSheet = parsed[0];
+      if (firstSheet && firstSheet.headers.length > 0) {
+        const labelGuess  = firstSheet.headers[0];
+        const numericCols = firstSheet.headers.filter(h => h !== labelGuess && isNumericCol(firstSheet.rows, h));
+        setLabelCol(labelGuess);
+        setValueCols(numericCols.slice(0, 3));
+      }
+    } catch {
+      setError("Kunne ikke læse filen. Prøv at gemme som .xlsx eller .csv og upload igen.");
     }
+    setLoading(false);
   }
-  return result.length >= 1 ? result : null;
-}
 
-function isLabelList(raw: string): boolean {
-  const lines = raw.trim().split(/\n/).map(l => l.trim()).filter(Boolean);
-  return lines.length > 0 && lines.every(l => isNaN(parseFloat(l.replace(",", "."))));
-}
+  function onDrop(e: React.DragEvent) {
+    e.preventDefault();
+    const f = e.dataTransfer.files[0];
+    if (f) handleFile(f);
+  }
 
-function parseLabels(raw: string): string[] {
-  return raw.trim().split(/\n/).map(l => l.trim()).filter(Boolean);
-}
+  function onInput(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0];
+    if (f) handleFile(f);
+  }
 
-const TOOLTIP_STYLE = { background: "#ffffff", border: "1.5px solid rgba(251,191,36,0.5)", borderRadius: 10, color: "#1c1917" };
-const AXIS_TICK   = { fill: "#a8a29e", fontSize: 12 };
-const GRID_STROKE = "rgba(255,255,255,0.06)";
+  function toggleValueCol(col: string) {
+    setValueCols(prev => prev.includes(col) ? prev.filter(c => c !== col) : [...prev, col]);
+  }
 
-function DataChart() {
-  const [raw1, setRaw1]         = useState("");
-  const [raw2, setRaw2]         = useState("");
-  const [label1, setLabel1]     = useState("Dataset A");
-  const [label2, setLabel2]     = useState("Dataset B");
-  const [chartType, setChartType] = useState<ChartType>("bar");
-  const [submitted, setSubmitted] = useState(false);
-
-  const EXAMPLE1        = "Jan,12000\nFeb,18500\nMar,15200\nApr,21000\nMaj,19800\nJun,24600";
-  const EXAMPLE2_LABELS = "Januar\nFebruar\nMarts\nApril\nMaj\nJuni";
-
-  const parsed1      = useMemo(() => submitted ? parseValues(raw1) : null, [raw1, submitted]);
-  const raw2IsLabels = submitted && raw2.trim() !== "" && isLabelList(raw2);
-  const labels2      = useMemo(() => submitted && raw2IsLabels ? parseLabels(raw2) : null, [raw2, raw2IsLabels, submitted]);
-  const parsed2      = useMemo(() => submitted && !raw2IsLabels ? parseValues(raw2) : null, [raw2, raw2IsLabels, submitted]);
-
-  const chartData = useMemo(() => {
-    if (!submitted) return null;
-    const lA = label1 || "A";
-    const lB = label2 || "B";
-    if (parsed1 && labels2) return parsed1.map((d, i) => ({ name: labels2[i] ?? d.name, [lA]: d.value }));
-    if (parsed1 && parsed2) {
-      const len = Math.max(parsed1.length, parsed2.length);
-      return Array.from({ length: len }, (_, i) => ({
-        name: parsed1[i]?.name ?? parsed2[i]?.name ?? `${i + 1}`,
-        [lA]: parsed1[i]?.value ?? null,
-        [lB]: parsed2[i]?.value ?? null,
-      }));
-    }
-    if (parsed1) return parsed1.map(d => ({ name: d.name, [lA]: d.value }));
-    if (parsed2) return parsed2.map(d => ({ name: d.name, [lB]: d.value }));
-    return null;
-  }, [parsed1, parsed2, labels2, label1, label2, submitted]);
-
-  const hasBoth = !!(parsed1 && parsed2 && !raw2IsLabels);
-  const lA = label1 || "A";
-  const lB = label2 || "B";
-  const types: { id: ChartType; label: string; icon: string }[] = [
-    { id: "bar", label: "Søjler", icon: "📊" },
-    { id: "line", label: "Linje", icon: "📈" },
-    { id: "area", label: "Areal", icon: "🌊" },
+  const types: { id: ChartType; icon: string; label: string }[] = [
+    { id: "bar",  icon: "📊", label: "Søjler" },
+    { id: "line", icon: "📈", label: "Linje"  },
+    { id: "area", icon: "🌊", label: "Areal"  },
   ];
 
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-        {[
-          { raw: raw1, setRaw: setRaw1, label: label1, setLabel: setLabel1, example: EXAMPLE1,        placeholder: "Indsæt tal:\n1200\n4000\n500\n\nEller: Label,Værdi\nJan,12000",              color: "#a78bfa", num: "A", badge: null as string | null },
-          { raw: raw2, setRaw: setRaw2, label: label2, setLabel: setLabel2, example: EXAMPLE2_LABELS, placeholder: "Indsæt X-akse navne (tekst):\nJanuar\nFebruar\n\nEller 2. datasæt:\n9000",  color: "#00DDEB", num: "B", badge: raw2IsLabels ? "X-akse" : (raw2.trim() ? "Datasæt" : null) },
-        ].map(ds => (
-          <div key={ds.num} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <div style={{ width: 10, height: 10, borderRadius: 2, background: ds.color, flexShrink: 0 }} />
-              <input value={ds.label} onChange={e => { ds.setLabel(e.target.value); setSubmitted(false); }}
-                placeholder={ds.num === "A" ? "Navn på data" : "Navn på X-akse eller 2. datasæt"}
-                className="uv-input" style={{ flex: 1, fontSize: 13, fontWeight: 600 }} />
-              {ds.badge && (
-                <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 99, flexShrink: 0,
-                  background: ds.badge === "X-akse" ? "rgba(0,221,235,0.15)" : "rgba(167,139,250,0.15)",
-                  color: ds.badge === "X-akse" ? "#00DDEB" : "#a78bfa",
-                  border: `1px solid ${ds.badge === "X-akse" ? "rgba(0,221,235,0.3)" : "rgba(167,139,250,0.3)"}`,
-                }}>{ds.badge}</span>
-              )}
-            </div>
-            <textarea value={ds.raw} onChange={e => { ds.setRaw(e.target.value); setSubmitted(false); }}
-              placeholder={ds.placeholder} className="uv-input" rows={7}
-              style={{ resize: "vertical", fontFamily: "monospace", fontSize: 12, lineHeight: 1.6 }} />
-            {!ds.raw && (
-              <button onClick={() => { ds.setRaw(ds.example); setSubmitted(false); }}
-                style={{ alignSelf: "flex-start", padding: "4px 12px", borderRadius: 99, cursor: "pointer",
-                  background: "rgba(255,255,255,0.04)", border: "1.5px solid rgba(255,255,255,0.08)", color: "var(--text-3)", fontSize: 11 }}>
-                💡 Eksempel
-              </button>
-            )}
+  // ── Upload drop zone ──────────────────────────────────────────────────────
+  if (sheets.length === 0) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div
+          onDrop={onDrop}
+          onDragOver={e => e.preventDefault()}
+          onClick={() => inputRef.current?.click()}
+          style={{
+            border: "2.5px dashed #e8e5e1", borderRadius: 16, padding: "52px 24px",
+            display: "flex", flexDirection: "column", alignItems: "center", gap: 14,
+            cursor: "pointer", textAlign: "center", transition: "border-color 0.15s",
+            background: "#fafaf9",
+          }}
+        >
+          <span style={{ fontSize: 44 }}>📂</span>
+          <div>
+            <p style={{ fontSize: 16, fontWeight: 700, color: "#1c1917", margin: "0 0 6px" }}>Upload Excel, CSV eller Sheets-fil</p>
+            <p style={{ fontSize: 13, color: "#78716c", margin: 0 }}>Træk og slip her, eller klik for at vælge</p>
           </div>
-        ))}
-      </div>
-
-      <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
-        <div style={{ display: "flex", gap: 6 }}>
-          {types.map(t => (
-            <button key={t.id} onClick={() => setChartType(t.id)} style={{
-              padding: "6px 14px", borderRadius: 99, cursor: "pointer", fontSize: 12, fontWeight: 600,
-              background: chartType === t.id ? "rgba(91,66,243,0.25)" : "rgba(255,255,255,0.05)",
-              border: `1.5px solid ${chartType === t.id ? "rgba(91,66,243,0.5)" : "rgba(255,255,255,0.08)"}`,
-              color: chartType === t.id ? "#a78bfa" : "var(--text-2)",
-            }}>{t.icon} {t.label}</button>
-          ))}
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
+            {[".xlsx", ".xls", ".csv", ".ods"].map(ext => (
+              <span key={ext} style={{ fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 99, background: "rgba(167,139,250,0.12)", color: "#7c3aed", border: "1px solid rgba(167,139,250,0.3)" }}>{ext}</span>
+            ))}
+          </div>
+          {loading && <p style={{ fontSize: 13, color: "#a8a29e", margin: 0 }}>Indlæser…</p>}
+          {error  && <p style={{ fontSize: 13, color: "#f87171", margin: 0 }}>{error}</p>}
         </div>
-        <button onClick={() => setSubmitted(true)} disabled={!raw1.trim() && !raw2.trim()} className="uv-btn" style={{ marginLeft: "auto", flexShrink: 0 }}>
-          <span className="uv-btn-text"><span>📊 Lav graf</span></span>
+        <input ref={inputRef} type="file" accept=".xlsx,.xls,.csv,.ods" onChange={onInput} style={{ display: "none" }} />
+        <p style={{ fontSize: 12, color: "#a8a29e", margin: 0, textAlign: "center" }}>
+          Tip: Eksporter Google Sheets som .xlsx eller .csv fra Filer → Download
+        </p>
+      </div>
+    );
+  }
+
+  // ── Config + chart ────────────────────────────────────────────────────────
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+
+      {/* File info + reset */}
+      <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 14px", borderRadius: 10, background: "rgba(167,139,250,0.08)", border: "1.5px solid rgba(167,139,250,0.25)" }}>
+        <span style={{ fontSize: 20 }}>📄</span>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{ fontSize: 13, fontWeight: 700, color: "#7c3aed", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{fileName}</p>
+          <p style={{ fontSize: 11, color: "#a8a29e", margin: 0 }}>{sheet?.rows.length ?? 0} rækker · {sheet?.headers.length ?? 0} kolonner</p>
+        </div>
+        <button onClick={() => { setSheets([]); setFileName(""); setError(""); setValueCols([]); setLabelCol(""); }}
+          style={{ padding: "5px 12px", borderRadius: 8, cursor: "pointer", fontSize: 12, fontWeight: 600, background: "#ffffff", border: "1.5px solid #e8e5e1", color: "#78716c", flexShrink: 0 }}>
+          ✕ Skift fil
         </button>
       </div>
 
-      {submitted && !chartData && (
-        <p style={{ color: "#f87171", fontSize: 13, margin: 0 }}>
-          Kunne ikke læse dataen. Brug formatet: <code style={{ background: "rgba(255,255,255,0.07)", padding: "1px 6px", borderRadius: 4 }}>Label,Værdi</code> én per linje.
-        </p>
+      {/* Sheet selector (if multiple) */}
+      {sheets.length > 1 && (
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+          {sheets.map((_, i) => (
+            <button key={i} onClick={() => { setSheetIdx(i); }} style={{
+              padding: "5px 14px", borderRadius: 8, cursor: "pointer", fontSize: 12, fontWeight: sheetIdx === i ? 700 : 400,
+              background: sheetIdx === i ? "rgba(167,139,250,0.15)" : "#ffffff",
+              border: `1.5px solid ${sheetIdx === i ? "rgba(167,139,250,0.5)" : "#e8e5e1"}`,
+              color: sheetIdx === i ? "#7c3aed" : "#57534e",
+            }}>Ark {i + 1}</button>
+          ))}
+        </div>
       )}
 
-      {chartData && (
-        <>
-          <div style={{ display: "flex", gap: 16 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <div style={{ width: 12, height: 12, borderRadius: 3, background: "#a78bfa" }} />
-              <span style={{ fontSize: 12, color: "var(--text-2)", fontWeight: 600 }}>{lA}</span>
+      {/* Column config */}
+      {sheet && sheet.headers.length > 0 && (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+          {/* Label column */}
+          <div>
+            <p style={{ fontSize: 12, fontWeight: 700, color: "#57534e", margin: "0 0 8px", textTransform: "uppercase", letterSpacing: "0.06em" }}>X-akse (label)</p>
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+              {sheet.headers.map(h => (
+                <button key={h} onClick={() => { setLabelCol(h); setValueCols(numCols.filter(c => c !== h).slice(0, 3)); }} style={{
+                  padding: "5px 12px", borderRadius: 8, cursor: "pointer", fontSize: 12, fontWeight: labelCol === h ? 700 : 400,
+                  background: labelCol === h ? "rgba(251,191,36,0.15)" : "#ffffff",
+                  border: `1.5px solid ${labelCol === h ? "rgba(251,191,36,0.6)" : "#e8e5e1"}`,
+                  color: labelCol === h ? "#92400e" : "#57534e",
+                }}>{h}</button>
+              ))}
             </div>
-            {hasBoth && (
-              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <div style={{ width: 12, height: 12, borderRadius: 3, background: "#00DDEB" }} />
-                <span style={{ fontSize: 12, color: "var(--text-2)", fontWeight: 600 }}>{lB}</span>
-              </div>
-            )}
           </div>
-          <div style={{ height: 320 }}>
+          {/* Value columns */}
+          <div>
+            <p style={{ fontSize: 12, fontWeight: 700, color: "#57534e", margin: "0 0 8px", textTransform: "uppercase", letterSpacing: "0.06em" }}>Værdier (Y-akse)</p>
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+              {numCols.map((h, i) => {
+                const active = valueCols.includes(h);
+                const col    = COLORS[i % COLORS.length];
+                return (
+                  <button key={h} onClick={() => toggleValueCol(h)} style={{
+                    padding: "5px 12px", borderRadius: 8, cursor: "pointer", fontSize: 12, fontWeight: active ? 700 : 400,
+                    background: active ? `${col}18` : "#ffffff",
+                    border: `1.5px solid ${active ? col + "88" : "#e8e5e1"}`,
+                    color: active ? col : "#57534e",
+                  }}>{h}</button>
+                );
+              })}
+              {numCols.length === 0 && <p style={{ fontSize: 12, color: "#a8a29e", margin: 0 }}>Ingen numeriske kolonner fundet</p>}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Chart type + render */}
+      {chartData && valueCols.length > 0 && (
+        <>
+          <div style={{ display: "flex", gap: 8 }}>
+            {types.map(t => (
+              <button key={t.id} onClick={() => setChartType(t.id)} style={{
+                padding: "6px 14px", borderRadius: 99, cursor: "pointer", fontSize: 12, fontWeight: 600,
+                background: chartType === t.id ? "rgba(167,139,250,0.18)" : "#ffffff",
+                border: `1.5px solid ${chartType === t.id ? "rgba(167,139,250,0.55)" : "#e8e5e1"}`,
+                color: chartType === t.id ? "#7c3aed" : "#57534e",
+              }}>{t.icon} {t.label}</button>
+            ))}
+          </div>
+          <div style={{ height: 340, borderRadius: 12, overflow: "hidden" }}>
             <ResponsiveContainer width="100%" height="100%">
               {chartType === "bar" ? (
                 <BarChart data={chartData} margin={{ top: 8, right: 8, left: 0, bottom: 8 }}>
-                  <defs>
-                    <linearGradient id="bG1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#a78bfa" /><stop offset="100%" stopColor="#5B42F3" /></linearGradient>
-                    <linearGradient id="bG2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#00DDEB" /><stop offset="100%" stopColor="#0891b2" /></linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke={GRID_STROKE} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
                   <XAxis dataKey="name" tick={AXIS_TICK} axisLine={false} tickLine={false} />
                   <YAxis tick={AXIS_TICK} axisLine={false} tickLine={false} width={48} />
-                  <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: "rgba(255,255,255,0.04)" }} />
-                  <Bar dataKey={lA} fill="url(#bG1)" radius={[5,5,0,0]} />
-                  {hasBoth && <Bar dataKey={lB} fill="url(#bG2)" radius={[5,5,0,0]} />}
+                  <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: "rgba(0,0,0,0.04)" }} />
+                  {valueCols.length > 1 && <Legend wrapperStyle={{ fontSize: 12 }} />}
+                  {valueCols.map((col, i) => (
+                    <Bar key={col} dataKey={col} fill={COLORS[i % COLORS.length]} radius={[5,5,0,0]} />
+                  ))}
                 </BarChart>
               ) : chartType === "line" ? (
                 <LineChart data={chartData} margin={{ top: 8, right: 8, left: 0, bottom: 8 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={GRID_STROKE} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
                   <XAxis dataKey="name" tick={AXIS_TICK} axisLine={false} tickLine={false} />
                   <YAxis tick={AXIS_TICK} axisLine={false} tickLine={false} width={48} />
                   <Tooltip contentStyle={TOOLTIP_STYLE} />
-                  <Line dataKey={lA} stroke="#a78bfa" strokeWidth={2.5} dot={{ fill: "#5B42F3", r: 4 }} activeDot={{ r: 6 }} />
-                  {hasBoth && <Line dataKey={lB} stroke="#00DDEB" strokeWidth={2.5} dot={{ fill: "#0891b2", r: 4 }} activeDot={{ r: 6 }} />}
+                  {valueCols.length > 1 && <Legend wrapperStyle={{ fontSize: 12 }} />}
+                  {valueCols.map((col, i) => (
+                    <Line key={col} dataKey={col} stroke={COLORS[i % COLORS.length]} strokeWidth={2.5} dot={{ r: 3 }} activeDot={{ r: 5 }} />
+                  ))}
                 </LineChart>
               ) : (
                 <AreaChart data={chartData} margin={{ top: 8, right: 8, left: 0, bottom: 8 }}>
-                  <defs>
-                    <linearGradient id="aG1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#a78bfa" stopOpacity={0.4} /><stop offset="100%" stopColor="#a78bfa" stopOpacity={0.02} /></linearGradient>
-                    <linearGradient id="aG2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#00DDEB" stopOpacity={0.35} /><stop offset="100%" stopColor="#00DDEB" stopOpacity={0.02} /></linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke={GRID_STROKE} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
                   <XAxis dataKey="name" tick={AXIS_TICK} axisLine={false} tickLine={false} />
                   <YAxis tick={AXIS_TICK} axisLine={false} tickLine={false} width={48} />
                   <Tooltip contentStyle={TOOLTIP_STYLE} />
-                  <Area dataKey={lA} stroke="#a78bfa" strokeWidth={2.5} fill="url(#aG1)" />
-                  {hasBoth && <Area dataKey={lB} stroke="#00DDEB" strokeWidth={2.5} fill="url(#aG2)" />}
+                  {valueCols.length > 1 && <Legend wrapperStyle={{ fontSize: 12 }} />}
+                  {valueCols.map((col, i) => (
+                    <Area key={col} dataKey={col} stroke={COLORS[i % COLORS.length]} strokeWidth={2.5}
+                      fill={COLORS[i % COLORS.length]} fillOpacity={0.12} />
+                  ))}
                 </AreaChart>
               )}
             </ResponsiveContainer>
           </div>
         </>
+      )}
+
+      {chartData && valueCols.length === 0 && (
+        <p style={{ fontSize: 13, color: "#f87171", margin: 0 }}>Vælg mindst én numerisk kolonne som Y-akse</p>
       )}
     </div>
   );
@@ -315,7 +390,7 @@ type ToolId = "password" | "chart";
 
 const TOOLS: { id: ToolId; label: string; icon: string; description: string }[] = [
   { id: "password", label: "Password-styrke", icon: "🔐", description: "Tjek dit password" },
-  { id: "chart",    label: "Data → Graf",      icon: "📊", description: "Indsæt data, få en graf" },
+  { id: "chart",    label: "Fil → Graf",       icon: "📊", description: "Upload Excel/CSV og få grafer" },
 ];
 
 export default function ToolsTab() {
@@ -346,7 +421,7 @@ export default function ToolsTab() {
       <div className="uv-card-1">
         <div className="uv-card-1-inner" style={card}>
           {active === "password" && <PasswordChecker />}
-          {active === "chart"    && <DataChart />}
+          {active === "chart"    && <FileChart />}
         </div>
       </div>
     </div>

@@ -6,16 +6,12 @@ import DashboardTab from "@/components/DashboardTab";
 import UdgifterTab from "@/components/UdgifterTab";
 import SkatTab from "@/components/SkatTab";
 import FlashcardsTab from "@/components/FlashcardsTab";
-import JeopardyTab from "@/components/JeopardyTab";
-import GamesTab from "@/components/GamesTab";
 import DomainCheckTab from "@/components/DomainCheckTab";
 import ToolsTab from "@/components/ToolsTab";
 import StocksTab from "@/components/StocksTab";
-import FitnessTab from "@/components/FitnessTab";
 import KeyboardTab from "@/components/KeyboardTab";
 import SalgTab from "@/components/SalgTab";
 import DetPerfekteSalgTab from "@/components/DetPerfekteSalgTab";
-import KundeforståelseTab from "@/components/KundeforståelseTab";
 import SalgsSpilTab from "@/components/SalgsSpilTab";
 import BeslutningTab from "@/components/BeslutningTab";
 import CVRTab from "@/components/CVRTab";
@@ -27,25 +23,36 @@ import IPGeoTab from "@/components/IPGeoTab";
 import TechStackTab from "@/components/TechStackTab";
 import JSONFormatterTab from "@/components/JSONFormatterTab";
 import APITesterTab from "@/components/APITesterTab";
+import HttpStatusTab from "@/components/HttpStatusTab";
+import CsvJsonTab from "@/components/CsvJsonTab";
+import SqlFormatterTab from "@/components/SqlFormatterTab";
+import SpringBootLogTab from "@/components/SpringBootLogTab";
+import EmailHeaderTab from "@/components/EmailHeaderTab";
+import LogFilterTab from "@/components/LogFilterTab";
+import EmailRoutingTab from "@/components/EmailRoutingTab";
 import { Settings, LogOut, CheckSquare, Menu, X, ChevronRight } from "lucide-react";
 import { FloatingNav, MenuItem, NavItem, DropdownLink } from "@/components/ui/navbar-menu";
 
 type TabId =
-  | "dashboard" | "flashkort" | "jeopardy"
-  | "udgifter" | "skat" | "indstillinger" | "spil"
+  | "dashboard" | "flashkort"
+  | "udgifter" | "skat" | "indstillinger"
   | "domæne" | "ssl" | "whois" | "emailval" | "ipgeo" | "techstack" | "jsonformat" | "apitester" | "værktøjer"
-  | "aktier" | "genveje" | "fitness" | "salg" | "perfekt-salg" | "kundeforståelse" | "salgs-spil"
+  | "csvjson" | "sqlformat" | "httpstatus"
+  | "springlog" | "emailheader" | "logfilter" | "emailrouting"
+  | "aktier" | "genveje" | "salg" | "perfekt-salg" | "salgs-spil"
   | "beslutning" | "cvr" | "kalorier";
 
 const TAB_LABELS: Record<TabId, string> = {
   dashboard: "🏠 Dashboard", flashkort: "🃏 Flashkort",
-  jeopardy: "🎯 Jeopardy", udgifter: "💸 Udgifter", skat: "🧾 Skat",
-  indstillinger: "⚙️ Indstillinger", spil: "🎮 Spil",
+  udgifter: "💸 Udgifter", skat: "🧾 Skat",
+  indstillinger: "⚙️ Indstillinger",
   domæne: "🔍 Domæne-tjek", ssl: "🔒 SSL-tjekker", whois: "🌐 WHOIS-opslag", emailval: "✉️ Email-validering",
   ipgeo: "🌍 IP-geolocation", techstack: "🔭 Tech-stack detektor", jsonformat: "{ } JSON formatter", apitester: "⚡ API tester",
+  csvjson: "📊 CSV/JSON", sqlformat: "🗃️ SQL formatter", httpstatus: "🌐 HTTP-statuskoder",
+  springlog: "📋 Spring Boot logs", emailheader: "📧 Email header", logfilter: "📊 Log filter", emailrouting: "📮 Email routing",
   værktøjer: "🔧 Værktøjer", aktier: "📈 Aktier",
-  genveje: "⌨️ Genveje", fitness: "💪 Fitness", salg: "💼 Salg",
-  "perfekt-salg": "🏆 Perfekt Salg", "kundeforståelse": "🧠 Forstå Kunden", "salgs-spil": "🎮 Salgs-spillet",
+  genveje: "⌨️ Genveje", salg: "💼 Salg",
+  "perfekt-salg": "🏆 Perfekt Salg", "salgs-spil": "🎮 Salgs-spillet",
   beslutning: "🪙 Beslutning",
   cvr: "🏢 CVR-opslag", kalorier: "🔥 Kalorier-forbrændt",
 };
@@ -57,9 +64,7 @@ const MOBILE_SECTIONS = [
       { id: "dashboard" as TabId, label: "🏠 Dashboard" },
       { id: "salg"            as TabId, label: "💼 Salg" },
       { id: "perfekt-salg"   as TabId, label: "🏆 Perfekt Salg" },
-      { id: "kundeforståelse" as TabId, label: "🧠 Forstå Kunden" },
       { id: "salgs-spil"     as TabId, label: "🎮 Salgs-spillet" },
-      { id: "fitness"   as TabId, label: "💪 Fitness" },
       { id: "aktier"    as TabId, label: "📈 Aktier" },
     ],
   },
@@ -67,7 +72,6 @@ const MOBILE_SECTIONS = [
     label: "Datamatiker",
     items: [
       { id: "flashkort" as TabId, label: "🃏 Flashkort" },
-      { id: "jeopardy"  as TabId, label: "🎯 Jeopardy" },
     ],
   },
   {
@@ -81,6 +85,18 @@ const MOBILE_SECTIONS = [
       { id: "techstack"  as TabId, label: "🔭 Tech-stack" },
       { id: "jsonformat" as TabId, label: "{ } JSON formatter" },
       { id: "apitester"  as TabId, label: "⚡ API tester" },
+      { id: "csvjson"    as TabId, label: "📊 CSV/JSON" },
+      { id: "sqlformat"  as TabId, label: "🗃️ SQL formatter" },
+      { id: "httpstatus" as TabId, label: "🌐 HTTP-statuskoder" },
+    ],
+  },
+  {
+    label: "Log & Mail",
+    items: [
+      { id: "springlog"    as TabId, label: "📋 Spring Boot logs" },
+      { id: "logfilter"    as TabId, label: "📊 Log filter" },
+      { id: "emailheader"  as TabId, label: "📧 Email header" },
+      { id: "emailrouting" as TabId, label: "📮 Email routing" },
     ],
   },
   {
@@ -164,19 +180,12 @@ export default function Home() {
 
             <NavItem label="Dashboard" active={activeTab === "dashboard"} onClick={() => goTo("dashboard")} />
 
-            <MenuItem setActive={setActiveMenu} active={activeMenu} item="Datamatiker">
-              <div style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 160 }}>
-                <DropdownLink onClick={() => goTo("flashkort")} active={activeTab === "flashkort"}>🃏 Flashkort</DropdownLink>
-                <DropdownLink onClick={() => goTo("jeopardy")}  active={activeTab === "jeopardy"}>🎯 Jeopardy</DropdownLink>
-              </div>
-            </MenuItem>
-
-            <NavItem label="🎮 Spil" active={activeTab === "spil"} onClick={() => goTo("spil")} />
+            <NavItem label="🃏 Flashkort" active={activeTab === "flashkort"} onClick={() => goTo("flashkort")} />
 
             <NavItem label="💸 Udgifter" active={activeTab === "udgifter"} onClick={() => goTo("udgifter")} />
 
             <MenuItem setActive={setActiveMenu} active={activeMenu} item="IT-redskaber">
-              <div style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 180 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 200 }}>
                 <DropdownLink onClick={() => goTo("domæne")}    active={activeTab === "domæne"}>🔍 Domæne-tjek</DropdownLink>
                 <DropdownLink onClick={() => goTo("ssl")}      active={activeTab === "ssl"}>🔒 SSL-tjekker</DropdownLink>
                 <DropdownLink onClick={() => goTo("whois")}    active={activeTab === "whois"}>🌐 WHOIS-opslag</DropdownLink>
@@ -185,13 +194,24 @@ export default function Home() {
                 <DropdownLink onClick={() => goTo("techstack")} active={activeTab === "techstack"}>🔭 Tech-stack</DropdownLink>
                 <DropdownLink onClick={() => goTo("jsonformat")} active={activeTab === "jsonformat"}>{"{ }"} JSON formatter</DropdownLink>
                 <DropdownLink onClick={() => goTo("apitester")} active={activeTab === "apitester"}>⚡ API tester</DropdownLink>
+                <DropdownLink onClick={() => goTo("csvjson")}   active={activeTab === "csvjson"}>📊 CSV/JSON</DropdownLink>
+                <DropdownLink onClick={() => goTo("sqlformat")} active={activeTab === "sqlformat"}>🗃️ SQL formatter</DropdownLink>
+                <DropdownLink onClick={() => goTo("httpstatus")} active={activeTab === "httpstatus"}>🌐 HTTP-statuskoder</DropdownLink>
+              </div>
+            </MenuItem>
+
+            <MenuItem setActive={setActiveMenu} active={activeMenu} item="Log & Mail">
+              <div style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 190 }}>
+                <DropdownLink onClick={() => goTo("springlog")}    active={activeTab === "springlog"}>📋 Spring Boot logs</DropdownLink>
+                <DropdownLink onClick={() => goTo("logfilter")}    active={activeTab === "logfilter"}>📊 Log filter</DropdownLink>
+                <DropdownLink onClick={() => goTo("emailheader")}  active={activeTab === "emailheader"}>📧 Email header</DropdownLink>
+                <DropdownLink onClick={() => goTo("emailrouting")} active={activeTab === "emailrouting"}>📮 Email routing</DropdownLink>
               </div>
             </MenuItem>
 
             <NavItem label="📈 Aktier"    active={activeTab === "aktier"}    onClick={() => goTo("aktier")} />
             <NavItem label="⌨️ Genveje"  active={activeTab === "genveje"}   onClick={() => goTo("genveje")} />
             <NavItem label="🔧 Værktøjer" active={activeTab === "værktøjer"} onClick={() => goTo("værktøjer")} />
-            <NavItem label="💪 Fitness"   active={activeTab === "fitness"}   onClick={() => goTo("fitness")} />
             <NavItem label="🏢 CVR-opslag" active={activeTab === "cvr"} onClick={() => goTo("cvr")} />
             <MenuItem setActive={setActiveMenu} active={activeMenu} item="Livsstil">
               <div style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 160 }}>
@@ -203,7 +223,6 @@ export default function Home() {
               <div style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 160 }}>
                 <DropdownLink onClick={() => goTo("salg")}            active={activeTab === "salg"}>💼 Salg</DropdownLink>
                 <DropdownLink onClick={() => goTo("perfekt-salg")}   active={activeTab === "perfekt-salg"}>🏆 Perfekt Salg</DropdownLink>
-                <DropdownLink onClick={() => goTo("kundeforståelse")} active={activeTab === "kundeforståelse"}>🧠 Forstå Kunden</DropdownLink>
                 <DropdownLink onClick={() => goTo("salgs-spil")}     active={activeTab === "salgs-spil"}>🎮 Salgs-spillet</DropdownLink>
               </div>
             </MenuItem>
@@ -379,8 +398,6 @@ export default function Home() {
       >
         {activeTab === "dashboard"     && <DashboardTab />}
         {activeTab === "flashkort"     && <FlashcardsTab />}
-        {activeTab === "jeopardy"      && <JeopardyTab />}
-        {activeTab === "spil"          && <GamesTab />}
         {activeTab === "domæne"        && <DomainCheckTab />}
         {activeTab === "ssl"           && <SSLTab />}
         {activeTab === "whois"         && <WHOISTab />}
@@ -389,16 +406,21 @@ export default function Home() {
         {activeTab === "techstack"     && <TechStackTab />}
         {activeTab === "jsonformat"    && <JSONFormatterTab />}
         {activeTab === "apitester"     && <APITesterTab />}
+        {activeTab === "csvjson"       && <CsvJsonTab />}
+        {activeTab === "sqlformat"     && <SqlFormatterTab />}
+        {activeTab === "httpstatus"    && <HttpStatusTab />}
+        {activeTab === "springlog"     && <SpringBootLogTab />}
+        {activeTab === "emailheader"   && <EmailHeaderTab />}
+        {activeTab === "logfilter"     && <LogFilterTab />}
+        {activeTab === "emailrouting"  && <EmailRoutingTab />}
         {activeTab === "udgifter"      && <UdgifterTab />}
         {activeTab === "skat"          && <SkatTab />}
         {activeTab === "indstillinger" && <IndstillingerPlaceholder />}
         {activeTab === "aktier"        && <StocksTab />}
         {activeTab === "genveje"       && <KeyboardTab />}
         {activeTab === "værktøjer"     && <ToolsTab />}
-        {activeTab === "fitness"       && <FitnessTab />}
         {activeTab === "salg"            && <SalgTab />}
         {activeTab === "perfekt-salg"   && <DetPerfekteSalgTab />}
-        {activeTab === "kundeforståelse" && <KundeforståelseTab />}
         {activeTab === "salgs-spil"      && <SalgsSpilTab />}
         {activeTab === "beslutning"      && <BeslutningTab />}
         {activeTab === "cvr"             && <CVRTab />}

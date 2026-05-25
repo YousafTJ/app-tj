@@ -1,0 +1,72 @@
+Ruflo — Installationsguide
+Agent orchestration platform til Claude Code.
+Testet på Windows 11 med Node.js v24 og Ruflo v3.10.0.
+
+Forudsætninger
+Før du installerer skal du have følgende på plads:
+
+Node.js installeret (v18 eller nyere). Tjek med: node --version
+En Anthropic-konto med Claude Pro på claude.ai
+PowerShell (Windows) eller Terminal (Mac/Linux)
+
+
+Installation — Step by Step
+Trin 1 — Installer Claude Code
+Åbn PowerShell og kør:
+powershellnpm install -g @anthropic-ai/claude-code
+Trin 2 — Start Claude Code første gang
+powershellclaude --dangerously-skip-permissions
+Log ind med din Anthropic-konto når du bliver bedt om det.
+Luk igen med CTRL + C når du er logget ind.
+Trin 3 — Installer Ruflo globalt
+powershellnpm install -g ruflo@latest
+Trin 4 — Verificer installationen
+powershellruflo --version
+Du bør se noget i stil med: ruflo v3.10.0
+Trin 5 — Gå ind i dit projektmappe
+powershellcd C:\Projekter\mit-projekt
+
+Udskift stien med din egen projektmappe.
+
+Trin 6 — Kør setup-wizarden
+powershellnpx ruflo@latest init wizard
+Wizarden stiller dig en række spørgsmål. Anbefalede svar:
+SpørgsmålAnbefalet valgConfiguration presetDefaultSwarm topologyHierarchical MeshMaximum concurrent agents10Memory backendHybridHNSW indexingYesNeural pattern learningYesSelf-learning memoryYesONNX embedding systemYesEmbedding modelMiniLM L6 (384d)
+Trin 7 — Tilføj Ruflo som MCP-server i Claude Code
+powershellclaude mcp add ruflo -- npx ruflo@latest mcp start
+Du bør se: Added stdio MCP server ruflo with command: npx ruflo@latest mcp start
+Trin 8 — Verificer at MCP-serveren virker
+powershellnpx ruflo@latest mcp start
+Du bør se [OK] MCP Server started og en tabel der viser Status: Running.
+Luk igen med CTRL + C.
+
+Installationen er nu færdig.
+
+Daglig brug — Sådan starter og aktiverer du Ruflo
+Trin 1 — Åbn PowerShell og gå til dit projekt
+powershellcd C:\Projekter\mit-projekt
+Trin 2 — Start Claude Code med Ruflo aktiveret
+powershell claude --dangerously-skip-permissions
+Ruflo er automatisk aktiv når du ser dette i bunden af skærmen:
+RuFlo V3.6 • user  |  Sonnet 4.6  |  MCP 1/1
+Trin 3 — Skriv din opgave direkte i prompten
+Bare skriv hvad du vil have bygget og tryk Enter, fx:
+Build a REST API with user authentication and Jest tests
+Ruflo koordinerer automatisk agenter i baggrunden. Du behøver ikke gøre noget ekstra.
+Sådan slukker du for det
+Tryk CTRL + C i terminalen for at lukke Claude Code og Ruflo ned.
+
+Nyttige kommandoer
+powershellruflo status              # Se systemstatus
+ruflo swarm init --v3-mode  # Start en swarm manuelt
+ruflo agent spawn -t coder  # Spawn en specifik agent
+ruflo doctor              # Kør sundhedstjek
+ruflo --help              # Se alle tilgængelige kommandoer
+
+Fejlfinding
+EBUSY fejl ved installation:
+claude.exe kører i baggrunden. Åbn Task Manager (CTRL + SHIFT + ESC), find og luk claude.exe, og kør installationen igen som administrator.
+claude-flow ikke genkendt:
+Kommandoen hedder ruflo i v3+, ikke claude-flow.
+orchestrate ikke genkendt:
+Brug ruflo autopilot "din opgave" i stedet.

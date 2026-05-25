@@ -60,7 +60,6 @@ type Shortcut = {
   description: string;
 };
 
-type CategoryId = "vscode" | "chrome" | "windows";
 type SectionId  = "shortcuts" | "linux" | "powershell" | "kubernetes" | "docker" | "viden" | "git";
 
 type Command = {
@@ -70,62 +69,39 @@ type Command = {
   topic: string;
 };
 
-// ─── Shortcut data ────────────────────────────────────────────────────────────
+// ─── General shortcuts ────────────────────────────────────────────────────────
 
-const SHORTCUTS: Record<CategoryId, Shortcut[]> = {
-  vscode: [
-    { label: "Gem",              keys: ["Ctrl", "S"],          description: "Gem den aktuelle fil" },
-    { label: "Fortryd",          keys: ["Ctrl", "Z"],          description: "Fortryd seneste handling" },
-    { label: "Gentag",           keys: ["Ctrl", "Shift", "Z"], description: "Gentag fortryd" },
-    { label: "Find",             keys: ["Ctrl", "F"],          description: "Søg i filen" },
-    { label: "Erstat",           keys: ["Ctrl", "H"],          description: "Find og erstat" },
-    { label: "Hurtigt åbn",      keys: ["Ctrl", "P"],          description: "Åbn fil hurtigt" },
-    { label: "Kommandopalet",    keys: ["Ctrl", "Shift", "P"], description: "Åbn kommandopalet" },
-    { label: "Kommenter",        keys: ["Ctrl", "/"],          description: "Kommenter/afkommenter linje" },
-    { label: "Vælg næste",       keys: ["Ctrl", "D"],          description: "Vælg næste forekomst af markeret tekst" },
-    { label: "Terminal",         keys: ["Ctrl", "`"],           description: "Åbn/luk integreret terminal" },
-    { label: "Sidebjælke",       keys: ["Ctrl", "B"],          description: "Vis/skjul sidebjælke" },
-    { label: "Flyt linje op",    keys: ["Alt", "↑"],           description: "Flyt aktuel linje op" },
-    { label: "Flyt linje ned",   keys: ["Alt", "↓"],           description: "Flyt aktuel linje ned" },
-    { label: "Slet linje",       keys: ["Ctrl", "Shift", "K"], description: "Slet aktuel linje" },
-    { label: "Formatér fil",     keys: ["Shift", "Alt", "F"],  description: "Automatisk formatering af koden" },
-  ],
-  chrome: [
-    { label: "Ny fane",          keys: ["Ctrl", "T"],          description: "Åbn en ny browserfane" },
-    { label: "Luk fane",         keys: ["Ctrl", "W"],          description: "Luk aktuel fane" },
-    { label: "Genåbn fane",      keys: ["Ctrl", "Shift", "T"], description: "Genåbn senest lukkede fane" },
-    { label: "Næste fane",       keys: ["Ctrl", "Tab"],        description: "Gå til næste fane" },
-    { label: "Adresselinje",     keys: ["Ctrl", "L"],          description: "Fokuser på adresselinjen" },
-    { label: "Genindlæs",        keys: ["Ctrl", "R"],          description: "Genindlæs siden" },
-    { label: "Dev Tools",        keys: ["F12"],                description: "Åbn udviklingsværktøjer" },
-    { label: "Find på side",     keys: ["Ctrl", "F"],          description: "Find tekst på den aktuelle side" },
-    { label: "Bogmærke",         keys: ["Ctrl", "D"],          description: "Bogmærk aktuel side" },
-    { label: "Privat vindue",    keys: ["Ctrl", "Shift", "N"], description: "Åbn nyt privat browservindue" },
-    { label: "Zoom ind",         keys: ["Ctrl", "="],          description: "Zoom ind på siden" },
-    { label: "Zoom ud",          keys: ["Ctrl", "-"],          description: "Zoom ud på siden" },
-    { label: "Se kildekode",     keys: ["Ctrl", "U"],          description: "Vis sidens HTML-kildekode" },
-  ],
-  windows: [
-    { label: "Skrivebord",       keys: ["Win", "D"],           description: "Vis/skjul skrivebordet" },
-    { label: "Stifinder",        keys: ["Win", "E"],           description: "Åbn File Explorer" },
-    { label: "Lås",              keys: ["Win", "L"],           description: "Lås computeren" },
-    { label: "Udklipsholder",    keys: ["Win", "V"],           description: "Åbn udklipsholderhistorik" },
-    { label: "Skift app",        keys: ["Alt", "Tab"],         description: "Skift mellem åbne programmer" },
-    { label: "Opgavevisning",    keys: ["Win", "Tab"],         description: "Se alle åbne vinduer og virtuelle skriveborde" },
-    { label: "Screenshot",       keys: ["Win", "Shift", "S"],  description: "Tag et skærmbillede af et valgt område" },
-    { label: "Jobliste",         keys: ["Ctrl", "Shift", "Esc"],description: "Åbn Jobliste direkte" },
-    { label: "Indstillinger",    keys: ["Win", "I"],           description: "Åbn Windows Indstillinger" },
-    { label: "Søg",              keys: ["Win", "S"],           description: "Åbn Windows-søgning" },
-    { label: "Kør",              keys: ["Win", "R"],           description: "Åbn Kør-dialogboksen" },
-    { label: "Snap venstre",     keys: ["Win", "←"],           description: "Snap aktivt vindue til venstre halvdel" },
-    { label: "Snap højre",       keys: ["Win", "→"],           description: "Snap aktivt vindue til højre halvdel" },
-  ],
-};
-
-const CATEGORIES: { id: CategoryId; label: string; icon: string }[] = [
-  { id: "vscode",  label: "VS Code",  icon: "💙" },
-  { id: "chrome",  label: "Chrome",   icon: "🌐" },
-  { id: "windows", label: "Windows",  icon: "🪟" },
+const GENERAL_SHORTCUTS: Shortcut[] = [
+  { label: "Kopier",           keys: ["Ctrl", "C"],            description: "Kopier markeret tekst eller element" },
+  { label: "Indsæt",           keys: ["Ctrl", "V"],            description: "Indsæt fra udklipsholderen" },
+  { label: "Klip",             keys: ["Ctrl", "X"],            description: "Klip markeret tekst eller element" },
+  { label: "Fortryd",          keys: ["Ctrl", "Z"],            description: "Fortryd seneste handling" },
+  { label: "Gentag (Redo)",    keys: ["Ctrl", "Y"],            description: "Gentag fortryd" },
+  { label: "Vælg alt",         keys: ["Ctrl", "A"],            description: "Markér alt indhold" },
+  { label: "Gem",              keys: ["Ctrl", "S"],            description: "Gem den aktuelle fil eller side" },
+  { label: "Find",             keys: ["Ctrl", "F"],            description: "Åbn søgefunktionen" },
+  { label: "Print",            keys: ["Ctrl", "P"],            description: "Åbn print-dialog" },
+  { label: "Ny",               keys: ["Ctrl", "N"],            description: "Opret ny fil, fane eller vindue" },
+  { label: "Luk fane/vindue",  keys: ["Ctrl", "W"],            description: "Luk aktuel fane eller vindue" },
+  { label: "Ny fane",          keys: ["Ctrl", "T"],            description: "Åbn ny fane" },
+  { label: "Genåbn fane",      keys: ["Ctrl", "Shift", "T"],  description: "Genåbn sidst lukkede fane" },
+  { label: "Næste fane",       keys: ["Ctrl", "Tab"],          description: "Skift til næste fane" },
+  { label: "Luk program",      keys: ["Alt", "F4"],            description: "Luk det aktive program" },
+  { label: "Skift program",    keys: ["Alt", "Tab"],           description: "Skift mellem åbne programmer" },
+  { label: "Lås computer",     keys: ["Win", "L"],             description: "Lås skærmen/computeren" },
+  { label: "Skrivebord",       keys: ["Win", "D"],             description: "Vis/skjul skrivebordet" },
+  { label: "Stifinder",        keys: ["Win", "E"],             description: "Åbn File Explorer" },
+  { label: "Screenshot",       keys: ["Win", "Shift", "S"],   description: "Tag skærmbillede af valgt område" },
+  { label: "Jobliste",         keys: ["Ctrl", "Shift", "Esc"],description: "Åbn Jobliste direkte" },
+  { label: "Kør-dialog",       keys: ["Win", "R"],             description: "Åbn Kør-dialogboksen" },
+  { label: "Gå til toppen",    keys: ["Ctrl", "Home"],         description: "Gå til starten af dokument/side" },
+  { label: "Gå til bunden",    keys: ["Ctrl", "End"],          description: "Gå til slutningen af dokument/side" },
+  { label: "Omdøb",            keys: ["F2"],                   description: "Omdøb markeret fil eller element" },
+  { label: "Opdater side",     keys: ["F5"],                   description: "Genindlæs/opdater siden" },
+  { label: "Fuld skærm",       keys: ["F11"],                  description: "Skift til fuldskærmstilstand" },
+  { label: "Udklipsholder",    keys: ["Win", "V"],             description: "Åbn udklipsholderhistorik" },
+  { label: "Zoom ind",         keys: ["Ctrl", "="],            description: "Zoom ind" },
+  { label: "Zoom ud",          keys: ["Ctrl", "-"],            description: "Zoom ud" },
 ];
 
 // ─── Command data ─────────────────────────────────────────────────────────────
@@ -584,10 +560,100 @@ const NETWORKING_KNOWLEDGE: KnowledgeItem[] = [
   { term: "WPA2/WPA3",              topic: "Sikkerhed",       explanation: "Krypteringsprotokoller til Wi-Fi. WPA3 er nyere og langt mere modstandsdygtig over for brute-force angreb." },
 ];
 
-function KnowledgeSection() {
-  const [filter, setFilter] = useState<string>("Alle");
-  const [search, setSearch] = useState("");
-  const topics = ["Alle", "Grundlæggende", "Protokoller", "Cloud & Docker", "Sikkerhed", "IoT & Avanceret"];
+// ─── Viden data & component ───────────────────────────────────────────────────
+
+type VidenCategoryId = "netværk" | "it-sikkerhed" | "cloud";
+
+const VIDEN_DATA: {
+  id: VidenCategoryId; label: string; icon: string; color: string; tagline: string;
+  know: { text: string; note?: string }[];
+  learn: { text: string; note?: string }[];
+}[] = [
+  {
+    id: "netværk", label: "Netværk", icon: "🌐", color: "#60a5fa",
+    tagline: "IP, DNS, HTTP, SSH, firewalls og alt imellem",
+    know: [
+      { text: "IP-adresser og DNS — A, AAAA, CNAME, MX records" },
+      { text: "HTTP vs HTTPS — TLS/SSL kryptering" },
+      { text: "SSH-forbindelser og nøglebaseret login" },
+      { text: "Porte — 80 (HTTP), 443 (HTTPS), 22 (SSH), 3306 (MySQL)" },
+      { text: "ping, traceroute, curl til netværksfejlsøgning" },
+      { text: "TCP vs UDP — hvad er forskellen?" },
+      { text: "VPN — krypterer og tunneler din trafik" },
+      { text: "Firewalls — filtrerer trafik baseret på regler" },
+    ],
+    learn: [
+      { text: "Subnetting og CIDR-notation", note: "fx 192.168.1.0/24 = 254 hosts" },
+      { text: "Load balancers — round-robin, health checks, sticky sessions" },
+      { text: "CDN (Content Delivery Network) — caching på kanten tæt på brugeren" },
+      { text: "Reverse proxy vs forward proxy", note: "Nginx, HAProxy" },
+      { text: "TLS-certifikater — Let's Encrypt, cert-manager i Kubernetes" },
+      { text: "DNS-zoner, SOA-records, propagation delay" },
+      { text: "Netværksfejlsøgning med ss, tcpdump, netstat" },
+      { text: "BGP og routing på internetniveau" },
+    ],
+  },
+  {
+    id: "it-sikkerhed", label: "IT-Sikkerhed", icon: "🔐", color: "#f87171",
+    tagline: "OWASP, kryptering, secrets og forsvar mod angreb",
+    know: [
+      { text: "HTTPS krypterer al trafik med TLS/SSL" },
+      { text: "SSH-nøgler er langt sikrere end passwords" },
+      { text: "2-faktor autentificering (2FA/MFA)" },
+      { text: "Stærke, unikke kodeord + password manager" },
+      { text: "Regelmæssige softwareopdateringer lukker kendte sårbarheder" },
+      { text: "Genkend phishing og social engineering forsøg" },
+      { text: "Firewalls og hvad de beskytter mod" },
+    ],
+    learn: [
+      { text: "OWASP Top 10", note: "XSS, SQL Injection, CSRF, IDOR, Broken Auth..." },
+      { text: "JWT-tokens — struktur (header.payload.signature), validering, expiry" },
+      { text: "Hashing (bcrypt, Argon2) vs kryptering (AES) — hvornår bruges hvad?" },
+      { text: "Secret management", note: "HashiCorp Vault, env vars, aldrig secrets i git" },
+      { text: "Security headers", note: "HSTS, CSP, X-Frame-Options, Referrer-Policy" },
+      { text: "Penetration testing basics", note: "Nmap, Burp Suite, OWASP ZAP" },
+      { text: "Principle of least privilege — giv kun adgang til det nødvendige" },
+      { text: "Audit logging og incident response" },
+    ],
+  },
+  {
+    id: "cloud", label: "Cloud / Infrastruktur", icon: "☁️", color: "#a78bfa",
+    tagline: "Cloud providers, IaC, CI/CD og observability",
+    know: [
+      { text: "Docker — Dockerfile, images, containers, volumes" },
+      { text: "Kubernetes basics — pods, services, deployments, namespaces" },
+      { text: "Vercel / Netlify til frontend-deploy" },
+      { text: "CI/CD pipelines med GitHub Actions" },
+      { text: "Environment variables og secrets til konfiguration" },
+      { text: "Git workflows — branches, PRs, merge strategier" },
+      { text: "Grundlæggende cloud-koncepter (IaaS, PaaS, SaaS)" },
+    ],
+    learn: [
+      { text: "Infrastructure as Code", note: "Terraform, Pulumi — infrastruktur som kode" },
+      { text: "Cloud providers — AWS (EC2, S3, RDS, Lambda), Azure, GCP" },
+      { text: "Managed databases vs self-hosted", note: "RDS, Cloud SQL, Aurora" },
+      { text: "Autoscaling — HPA i Kubernetes, cloud auto-scaling groups" },
+      { text: "Observability — metrics (Prometheus), logs (Loki), tracing (Jaeger)" },
+      { text: "GitOps", note: "ArgoCD, Flux — deklarativ infrastruktur fra Git" },
+      { text: "Service mesh", note: "Istio, Linkerd — mTLS og traffic management" },
+      { text: "Cost optimization — spot instances, reserved capacity, rightsizing" },
+    ],
+  },
+];
+
+const LEARNING_PATH = [
+  { step: 1, tag: "🐳 Containers",   title: "Docker + Kubernetes",         detail: "Containerisering er fundamentet i moderne IT-infrastruktur. Du er allerede igang — fortsæt med at bygge og deploye rigtige applikationer." },
+  { step: 2, tag: "☁️ Cloud",         title: "Cloud basics (AWS/Azure/GCP)", detail: "Produktionssystemer kører i cloud. Lær de vigtigste services: compute (EC2/VMs), storage (S3/Blob), databaser (RDS) og networking (VPC)." },
+  { step: 3, tag: "🔐 Sikkerhed",     title: "IT-Sikkerhed basics",          detail: "OWASP Top 10, JWT, secret management og sikre deployments. Kritisk for at arbejde professionelt med systemer i produktion." },
+  { step: 4, tag: "🏗️ IaC",           title: "Infrastructure as Code",       detail: "Terraform eller Pulumi — automatiser oprettelse og vedligeholdelse af infrastruktur som versionsstyret kode." },
+  { step: 5, tag: "📊 Observability", title: "Prometheus + Grafana + Loki",  detail: "Forstå hvad der sker i dine systemer i produktion. Metrics, dashboards og log-aggregation er uundværlige til fejlsøgning." },
+];
+
+function VidenSection() {
+  const [openId, setOpenId] = useState<VidenCategoryId | null>("netværk");
+  const [glossFilter, setGlossFilter] = useState<string>("Alle");
+  const [glossSearch, setGlossSearch] = useState("");
+  const glossTopics = ["Alle", "Grundlæggende", "Protokoller", "Cloud & Docker", "Sikkerhed", "IoT & Avanceret"];
   const topicColors: Record<string, string> = {
     "Grundlæggende":  "#60a5fa",
     "Protokoller":    "#34d399",
@@ -595,50 +661,134 @@ function KnowledgeSection() {
     "Sikkerhed":      "#f87171",
     "IoT & Avanceret":"#fbbf24",
   };
-  const filtered = NETWORKING_KNOWLEDGE.filter(item => {
-    const matchTopic = filter === "Alle" || item.topic === filter;
-    const q = search.toLowerCase();
+  const filteredGloss = NETWORKING_KNOWLEDGE.filter(item => {
+    const matchTopic = glossFilter === "Alle" || item.topic === glossFilter;
+    const q = glossSearch.toLowerCase();
     return matchTopic && (!q || item.term.toLowerCase().includes(q) || item.explanation.toLowerCase().includes(q));
   });
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
-        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Søg begreber..."
-          style={{ flex: "1 1 180px", padding: "8px 14px", borderRadius: 10, fontSize: 13,
-            background: "#ffffff", border: "1.5px solid #e8e5e1", color: "var(--text)", outline: "none" }} />
-        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-          {topics.map(t => {
-            const color = t === "Alle" ? "#f59e0b" : topicColors[t];
-            return (
-              <button key={t} onClick={() => setFilter(t)} style={{
-                padding: "6px 12px", borderRadius: 99, fontSize: 12, fontWeight: filter === t ? 700 : 400, cursor: "pointer",
-                background: filter === t ? `${color}18` : "#ffffff",
-                border: `1.5px solid ${filter === t ? `${color}55` : "#e8e5e1"}`,
-                color: filter === t ? color : "#78716c",
-              }}>{t}</button>
-            );
-          })}
+    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+
+      {/* ── Expandable category cards ── */}
+      {VIDEN_DATA.map(cat => {
+        const isOpen = openId === cat.id;
+        return (
+          <div key={cat.id} style={{ borderRadius: 14, overflow: "hidden", border: `2px solid ${isOpen ? cat.color + "55" : "#e8e5e1"}`, transition: "border-color 0.2s" }}>
+            <button onClick={() => setOpenId(isOpen ? null : cat.id)} style={{
+              width: "100%", display: "flex", alignItems: "center", gap: 14,
+              padding: "16px 20px", cursor: "pointer", textAlign: "left",
+              background: isOpen ? `${cat.color}08` : "#ffffff", border: "none",
+              borderBottom: isOpen ? `2px solid ${cat.color}25` : "none",
+            }}>
+              <span style={{ fontSize: 24 }}>{cat.icon}</span>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontSize: 16, fontWeight: 800, color: isOpen ? cat.color : "#1c1917", margin: "0 0 3px" }}>{cat.label}</p>
+                <p style={{ fontSize: 12, color: "#78716c", margin: 0 }}>{cat.tagline}</p>
+              </div>
+              <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                <span style={{ fontSize: 11, color: "#a8a29e" }}>{cat.know.length + cat.learn.length} punkter</span>
+                <span style={{ fontSize: 14, color: isOpen ? cat.color : "#a8a29e", display: "inline-block", transform: isOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }}>▼</span>
+              </div>
+            </button>
+            {isOpen && (
+              <div style={{ padding: "20px", background: "#ffffff", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 20 }}>
+                <div>
+                  <p style={{ fontSize: 11, fontWeight: 800, color: "#22c55e", textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 10px" }}>✅ Hvad du har styr på</p>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    {cat.know.map((item, i) => (
+                      <div key={i} style={{ display: "flex", gap: 10, padding: "8px 12px", borderRadius: 8, background: "rgba(34,197,94,0.05)", border: "1.5px solid rgba(34,197,94,0.15)" }}>
+                        <span style={{ color: "#22c55e", flexShrink: 0 }}>✓</span>
+                        <div>
+                          <p style={{ fontSize: 13, color: "#1c1917", margin: 0, fontWeight: 500 }}>{item.text}</p>
+                          {item.note && <p style={{ fontSize: 11, color: "#78716c", margin: "2px 0 0" }}>{item.note}</p>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p style={{ fontSize: 11, fontWeight: 800, color: cat.color, textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 10px" }}>📚 Hvad du bør lære</p>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    {cat.learn.map((item, i) => (
+                      <div key={i} style={{ display: "flex", gap: 10, padding: "8px 12px", borderRadius: 8, background: `${cat.color}06`, border: `1.5px solid ${cat.color}22` }}>
+                        <span style={{ color: cat.color, flexShrink: 0 }}>→</span>
+                        <div>
+                          <p style={{ fontSize: 13, color: "#1c1917", margin: 0, fontWeight: 500 }}>{item.text}</p>
+                          {item.note && <p style={{ fontSize: 11, color: "#78716c", margin: "2px 0 0" }}>{item.note}</p>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+
+      {/* ── Learning path ── */}
+      <div style={{ borderRadius: 14, overflow: "hidden", border: "2px solid #e8e5e1" }}>
+        <div style={{ padding: "14px 20px", background: "rgba(245,158,11,0.08)", borderBottom: "2px solid rgba(245,158,11,0.2)" }}>
+          <p style={{ fontSize: 14, fontWeight: 800, color: "#92400e", margin: 0 }}>🎯 Prioriteret læringsrækkefølge til dit job</p>
+        </div>
+        <div style={{ background: "#ffffff" }}>
+          {LEARNING_PATH.map((step, i) => (
+            <div key={i} style={{ display: "flex", gap: 16, padding: "14px 20px", borderBottom: i < LEARNING_PATH.length - 1 ? "1px solid #f0ede9" : "none" }}>
+              <div style={{ width: 28, height: 28, borderRadius: 99, background: "#f59e0b", color: "#78350f", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, flexShrink: 0 }}>{step.step}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", marginBottom: 4 }}>
+                  <p style={{ fontSize: 14, fontWeight: 700, color: "#1c1917", margin: 0 }}>{step.title}</p>
+                  <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 99, background: "rgba(245,158,11,0.12)", color: "#92400e", border: "1px solid rgba(245,158,11,0.25)" }}>{step.tag}</span>
+                </div>
+                <p style={{ fontSize: 12, color: "#57534e", margin: 0, lineHeight: 1.55 }}>{step.detail}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 10 }}>
-        {filtered.map((item, i) => {
-          const color = topicColors[item.topic] ?? "#f59e0b";
-          return (
-            <div key={i} style={{
-              padding: "16px 18px", borderRadius: 12, background: "#ffffff",
-              border: "2px solid #e8e5e1", borderLeft: `4px solid ${color}`,
-            }}>
-              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8, marginBottom: 8 }}>
-                <p style={{ fontSize: 15, fontWeight: 800, color: "#1c1917", margin: 0 }}>{item.term}</p>
-                <span style={{ fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 99, whiteSpace: "nowrap", flexShrink: 0,
-                  background: `${color}15`, color, border: `1.5px solid ${color}35` }}>{item.topic}</span>
-              </div>
-              <p style={{ fontSize: 13, color: "#57534e", margin: 0, lineHeight: 1.65 }}>{item.explanation}</p>
+
+      {/* ── Networking glossary ── */}
+      <div style={{ borderRadius: 14, overflow: "hidden", border: "2px solid #e8e5e1" }}>
+        <div style={{ padding: "14px 20px", background: "rgba(96,165,250,0.08)", borderBottom: "2px solid rgba(96,165,250,0.2)" }}>
+          <p style={{ fontSize: 14, fontWeight: 800, color: "#1d4ed8", margin: 0 }}>📖 Begrebsleksikon — Netværk & Cloud ({NETWORKING_KNOWLEDGE.length} begreber)</p>
+        </div>
+        <div style={{ padding: "16px 18px" }}>
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center", marginBottom: 14 }}>
+            <input value={glossSearch} onChange={e => setGlossSearch(e.target.value)} placeholder="Søg begreber..."
+              style={{ flex: "1 1 180px", padding: "8px 14px", borderRadius: 10, fontSize: 13, background: "#ffffff", border: "1.5px solid #e8e5e1", color: "var(--text)", outline: "none" }} />
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+              {glossTopics.map(t => {
+                const color = t === "Alle" ? "#f59e0b" : topicColors[t];
+                return (
+                  <button key={t} onClick={() => setGlossFilter(t)} style={{
+                    padding: "6px 12px", borderRadius: 99, fontSize: 12, fontWeight: glossFilter === t ? 700 : 400, cursor: "pointer",
+                    background: glossFilter === t ? `${color}18` : "#ffffff",
+                    border: `1.5px solid ${glossFilter === t ? `${color}55` : "#e8e5e1"}`,
+                    color: glossFilter === t ? color : "#78716c",
+                  }}>{t}</button>
+                );
+              })}
             </div>
-          );
-        })}
-        {filtered.length === 0 && <p style={{ color: "var(--text-3)", fontSize: 13, padding: "20px 0" }}>Ingen begreber matcher søgningen</p>}
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 10 }}>
+            {filteredGloss.map((item, i) => {
+              const color = topicColors[item.topic] ?? "#f59e0b";
+              return (
+                <div key={i} style={{ padding: "16px 18px", borderRadius: 12, background: "#ffffff", border: "2px solid #e8e5e1", borderLeft: `4px solid ${color}` }}>
+                  <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8, marginBottom: 8 }}>
+                    <p style={{ fontSize: 15, fontWeight: 800, color: "#1c1917", margin: 0 }}>{item.term}</p>
+                    <span style={{ fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 99, whiteSpace: "nowrap", flexShrink: 0, background: `${color}15`, color, border: `1.5px solid ${color}35` }}>{item.topic}</span>
+                  </div>
+                  <p style={{ fontSize: 13, color: "#57534e", margin: 0, lineHeight: 1.65 }}>{item.explanation}</p>
+                </div>
+              );
+            })}
+            {filteredGloss.length === 0 && <p style={{ color: "var(--text-3)", fontSize: 13, padding: "20px 0" }}>Ingen begreber matcher søgningen</p>}
+          </div>
+        </div>
       </div>
+
     </div>
   );
 }
@@ -905,45 +1055,15 @@ function CommandSection({ commands, accentColor }: { commands: Command[]; accent
 
 export default function KeyboardTab() {
   const [section,  setSection]  = useState<SectionId>("shortcuts");
-  const [category, setCategory] = useState<CategoryId>("vscode");
   const [selected, setSelected] = useState<Shortcut | null>(null);
-  const [quizMode, setQuizMode] = useState(false);
-  const [quizRevealed, setQuizRevealed] = useState(false);
-  const [quizIndex, setQuizIndex]       = useState(0);
-
-  const shortcuts  = SHORTCUTS[category];
   const highlighted = selected?.keys ?? [];
-
-  function nextQuiz() {
-    setQuizRevealed(false);
-    setQuizIndex(i => (i + 1) % shortcuts.length);
-    setSelected(null);
-  }
-  const quizShortcut = shortcuts[quizIndex];
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
-        <div>
-          <h1 style={{ fontSize: 28, fontWeight: 800, color: "var(--text)", margin: "0 0 6px" }}>Genveje & Kommandoer</h1>
-          <p style={{ fontSize: 15, color: "var(--text-2)", margin: 0 }}>
-            Tastatur-genveje, Linux-kommandoer og PowerShell
-          </p>
-        </div>
-        {section === "shortcuts" && (
-          <button
-            onClick={() => { setQuizMode(q => !q); setSelected(null); setQuizRevealed(false); }}
-            style={{
-              padding: "8px 18px", borderRadius: 99, cursor: "pointer", fontSize: 13, fontWeight: 600,
-              background: quizMode ? "#fffbeb" : "#f5f4f2",
-              border: `1.5px solid ${quizMode ? "rgba(245,158,11,0.5)" : "#e8e5e1"}`,
-              color: quizMode ? "#92400e" : "#78716c",
-            }}
-          >
-            {quizMode ? "📖 Oversigt" : "🎯 Træn"}
-          </button>
-        )}
+      <div>
+        <h1 style={{ fontSize: 28, fontWeight: 800, color: "var(--text)", margin: "0 0 6px" }}>Genveje & Kommandoer</h1>
+        <p style={{ fontSize: 15, color: "var(--text-2)", margin: 0 }}>Tastatur-genveje, Linux-kommandoer og PowerShell</p>
       </div>
 
       {/* Section selector */}
@@ -959,7 +1079,7 @@ export default function KeyboardTab() {
         ]).map(s => (
           <button
             key={s.id}
-            onClick={() => { setSection(s.id); setQuizMode(false); setSelected(null); }}
+            onClick={() => { setSection(s.id); setSelected(null); }}
             style={{
               padding: "8px 18px", borderRadius: 10, cursor: "pointer", fontSize: 13, fontWeight: section === s.id ? 700 : 500,
               background: section === s.id ? "#fffbeb" : "#ffffff",
@@ -973,136 +1093,54 @@ export default function KeyboardTab() {
       {/* ── Shortcuts section ───────────────────────────────────────────────── */}
       {section === "shortcuts" && (
         <>
-          {/* Category tabs */}
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            {CATEGORIES.map(c => (
-              <button
-                key={c.id}
-                onClick={() => { setCategory(c.id); setSelected(null); setQuizIndex(0); setQuizRevealed(false); setQuizMode(false); }}
-                style={{
-                  display: "flex", alignItems: "center", gap: 7,
-                  padding: "8px 16px", borderRadius: 10, cursor: "pointer",
-                  background: category === c.id ? "#fffbeb" : "#ffffff",
-                  border: `2px solid ${category === c.id ? "rgba(245,158,11,0.55)" : "#e8e5e1"}`,
-                  fontSize: 13, fontWeight: category === c.id ? 700 : 500,
-                  color: category === c.id ? "#92400e" : "#57534e",
-                }}
-              >
-                <span>{c.icon}</span> {c.label}
-              </button>
-            ))}
-          </div>
-
           {/* Keyboard */}
           <div style={{ borderRadius: 14, border: "2px solid #e8e5e1", background: "#f9f8f6", padding: "20px 22px" }}>
-            <Keyboard highlighted={quizMode && quizRevealed ? quizShortcut.keys : highlighted} />
+            <Keyboard highlighted={highlighted} />
           </div>
 
-          {/* Quiz mode */}
-          {quizMode && (
-            <div style={{ borderRadius: 14, border: "2px solid #e8e5e1", background: "#ffffff", padding: "24px 26px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-                <p style={{ fontSize: 13, color: "#a8a29e", margin: 0 }}>
-                  Spørgsmål {quizIndex + 1} / {shortcuts.length}
-                </p>
-                <div style={{ display: "flex", gap: 3 }}>
-                  {shortcuts.map((_, i) => (
-                    <div key={i} style={{
-                      width: 8, height: 8, borderRadius: 99,
-                      background: i === quizIndex ? "#f59e0b" : i < quizIndex ? "#22c55e" : "#e8e5e1",
-                    }} />
-                  ))}
-                </div>
-              </div>
-
-              <div style={{ textAlign: "center", padding: "10px 0 24px" }}>
-                <p style={{ fontSize: 22, fontWeight: 800, color: "#1c1917", margin: "0 0 8px" }}>
-                  {quizShortcut.description}
-                </p>
-                <p style={{ fontSize: 13, color: "#a8a29e", margin: 0 }}>Hvilken genvej er dette?</p>
-              </div>
-
-              {!quizRevealed ? (
-                <div style={{ display: "flex", justifyContent: "center" }}>
-                  <button onClick={() => setQuizRevealed(true)} className="uv-btn">
-                    <span className="uv-btn-text"><span>Vis genvej</span></span>
-                  </button>
-                </div>
-              ) : (
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
-                  <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap", justifyContent: "center" }}>
-                    {quizShortcut.keys.map((k, i) => (
-                      <span key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                        <span style={{
-                          padding: "8px 16px", borderRadius: 9,
-                          background: "linear-gradient(135deg, #f59e0b, #fbbf24)",
-                          color: "#78350f", fontSize: 15, fontWeight: 800,
-                          boxShadow: "0 4px 12px rgba(245,158,11,0.35)",
-                          border: "2px solid #f59e0b",
-                        }}>{k}</span>
-                        {i < quizShortcut.keys.length - 1 && (
-                          <span style={{ fontSize: 16, color: "#a8a29e", fontWeight: 600 }}>+</span>
-                        )}
-                      </span>
-                    ))}
-                  </div>
-                  <button onClick={nextQuiz} style={{
-                    padding: "8px 22px", borderRadius: 99, cursor: "pointer",
-                    background: "#f5f4f2", border: "1.5px solid #e8e5e1",
-                    color: "#57534e", fontSize: 13, fontWeight: 600,
-                  }}>Næste →</button>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Shortcut grid (non-quiz, non-table) */}
-          {!quizMode && (
-            <div className="uv-card-1">
-              <div className="uv-card-1-inner" style={{ padding: "16px 18px" }}>
-                <p style={{ fontSize: 13, color: "var(--text-3)", margin: "0 0 12px" }}>
-                  {shortcuts.length} genveje — klik for at fremhæve på tastaturet
-                </p>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 6 }}>
-                  {shortcuts.map((s, i) => {
-                    const isSelected = selected?.label === s.label;
-                    return (
-                      <button
-                        key={i}
-                        onClick={() => setSelected(isSelected ? null : s)}
-                        style={{
-                          display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10,
-                          padding: "10px 14px", borderRadius: 10, cursor: "pointer", textAlign: "left",
-                          background: isSelected ? "rgba(91,66,243,0.15)" : "rgba(255,255,255,0.03)",
-                          border: `1.5px solid ${isSelected ? "rgba(91,66,243,0.45)" : "rgba(255,255,255,0.06)"}`,
-                          transition: "all 0.15s",
-                        }}
-                      >
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <p style={{ fontSize: 13, fontWeight: 600, color: isSelected ? "#a78bfa" : "#1c1917", margin: "0 0 2px" }}>
-                            {s.label}
-                          </p>
-                          <p style={{ fontSize: 11, color: "var(--text-3)", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                            {s.description}
-                          </p>
-                        </div>
-                        <div style={{ display: "flex", gap: 3, alignItems: "center", flexShrink: 0 }}>
-                          {s.keys.map((k, ki) => (
-                            <span key={ki} style={{ display: "flex", alignItems: "center", gap: 3 }}>
-                              <KeyBadge k={k} active={isSelected} />
-                              {ki < s.keys.length - 1 && (
-                                <span style={{ fontSize: 9, color: "var(--text-3)" }}>+</span>
-                              )}
-                            </span>
-                          ))}
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
+          {/* Shortcut grid */}
+          <div className="uv-card-1">
+            <div className="uv-card-1-inner" style={{ padding: "16px 18px" }}>
+              <p style={{ fontSize: 13, color: "var(--text-3)", margin: "0 0 12px" }}>
+                {GENERAL_SHORTCUTS.length} generelle genveje — klik for at fremhæve på tastaturet
+              </p>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 6 }}>
+                {GENERAL_SHORTCUTS.map((s, i) => {
+                  const isSelected = selected?.label === s.label;
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => setSelected(isSelected ? null : s)}
+                      style={{
+                        display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10,
+                        padding: "10px 14px", borderRadius: 10, cursor: "pointer", textAlign: "left",
+                        background: isSelected ? "rgba(91,66,243,0.15)" : "#ffffff",
+                        border: `1.5px solid ${isSelected ? "rgba(91,66,243,0.45)" : "#e8e5e1"}`,
+                        transition: "all 0.15s",
+                      }}
+                    >
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ fontSize: 13, fontWeight: 600, color: isSelected ? "#a78bfa" : "#1c1917", margin: "0 0 2px" }}>
+                          {s.label}
+                        </p>
+                        <p style={{ fontSize: 11, color: "var(--text-3)", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          {s.description}
+                        </p>
+                      </div>
+                      <div style={{ display: "flex", gap: 3, alignItems: "center", flexShrink: 0 }}>
+                        {s.keys.map((k, ki) => (
+                          <span key={ki} style={{ display: "flex", alignItems: "center", gap: 3 }}>
+                            <KeyBadge k={k} active={isSelected} />
+                            {ki < s.keys.length - 1 && <span style={{ fontSize: 9, color: "var(--text-3)" }}>+</span>}
+                          </span>
+                        ))}
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
-          )}
+          </div>
         </>
       )}
 
@@ -1572,11 +1610,11 @@ export default function KeyboardTab() {
           <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", borderRadius: 12, background: "rgba(96,165,250,0.08)", border: "1.5px solid rgba(96,165,250,0.2)" }}>
             <span style={{ fontSize: 20 }}>🌐</span>
             <div>
-              <p style={{ fontSize: 14, fontWeight: 600, color: "#60a5fa", margin: 0 }}>Netværk & Networking — Begrebsleksikon</p>
-              <p style={{ fontSize: 12, color: "var(--text-3)", margin: 0 }}>{NETWORKING_KNOWLEDGE.length} begreber — fra IP og DNS til Kubernetes, BGP og MQTT</p>
+              <p style={{ fontSize: 14, fontWeight: 600, color: "#60a5fa", margin: 0 }}>IT-Viden — Netværk, Sikkerhed & Cloud</p>
+              <p style={{ fontSize: 12, color: "var(--text-3)", margin: 0 }}>Klik på en kategori for at se hvad du har styr på + hvad du bør lære</p>
             </div>
           </div>
-          <KnowledgeSection />
+          <VidenSection />
         </>
       )}
 
